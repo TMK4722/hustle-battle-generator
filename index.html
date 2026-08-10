@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Hustle Battle Generator</title>
+
+  <link rel="stylesheet" href="style.css?v=17">
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="app-header">
+
+      <h1>Hustle Battle Generator</h1>
+
+      <p>
+        参加者を登録して、バトルの組み合わせを作成します。
+      </p>
+
+    </header>
+
+
+    <!-- 参加者登録 -->
+    <section class="card">
+
+      <h2>参加者登録</h2>
+
+      <label class="field-label" for="name">
+        名前
+      </label>
+
+      <input
+        type="text"
+        id="name"
+        class="name-input"
+        placeholder="例：Tamaki"
+      >
+
+
+      <p class="field-label">
+        Role
+      </p>
+
+      <div class="role-selector">
+
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value="leader"
+          >
+          Leader
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value="follower"
+          >
+          Follower
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value="both"
+          >
+          Both
+        </label>
+
+      </div>
+
+
+      <p class="field-label">
+        Judge
+      </p>
+
+      <label class="judge-selector">
+
+        <input
+          type="checkbox"
+          id="judgeAvailable"
+          checked
+        >
+
+        <span>Judge可能</span>
+
+      </label>
+
+
+      <button
+        type="button"
+        id="addParticipant"
+        class="add-button"
+      >
+        参加者を追加
+      </button>
+
+    </section>
+
+
+    <!-- 参加者一覧 -->
+    <section class="card">
+
+      <div class="list-header">
+
+        <h2>参加者一覧</h2>
+
+        <span id="participantCount">
+          0人
+        </span>
+
+      </div>
+
+
+      <div
+        id="emptyMessage"
+        class="empty-message"
+      >
+        参加者はまだ登録されていません。
+      </div>
+
+
+      <div id="participantList"></div>
+
+    </section>
+
+
+    <!-- Round生成 -->
+    <section class="card">
+
+      <h2>Round生成</h2>
+
+      <p class="section-description">
+        出場回数・Pair履歴・対戦履歴・Judge回数を考慮して生成します。
+      </p>
+
+      <button
+        type="button"
+        id="generateRound"
+        class="generate-button"
+      >
+        Generate Round
+      </button>
+
+
+      <div class="save-note">
+        状態はこのブラウザに自動保存されます。
+      </div>
+
+
+      <button
+        type="button"
+        id="resetRoundData"
+        class="reset-button"
+      >
+        Roundデータをリセット
+      </button>
+
+    </section>
+
+
+    <!-- Round結果 -->
+    <section
+      id="roundResultCard"
+      class="card hidden"
+    >
+
+      <div class="round-header">
+
+        <h2 id="roundTitle">
+          Round 1
+        </h2>
+
+        <span id="battleCount"></span>
+
+      </div>
+
+
+      <div id="battleList"></div>
+
+
+      <div
+        id="waitingArea"
+        class="waiting-area hidden"
+      >
+
+        <h3>今回未出場</h3>
+
+        <div id="waitingList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Pair履歴 -->
+    <section class="card">
+
+      <div class="history-header">
+
+        <h2>Pair履歴</h2>
+
+        <span class="debug-label">
+          確認用
+        </span>
+
+      </div>
+
+      <p class="section-description">
+        過去に組んだペアと回数を確認できます。
+      </p>
+
+      <div
+        id="pairHistoryEmpty"
+        class="empty-message"
+      >
+        Pair履歴はまだありません。
+      </div>
+
+      <div id="pairHistoryList"></div>
+
+    </section>
+
+
+    <!-- 最多対戦相手 -->
+    <section class="card">
+
+      <div class="history-header">
+
+        <h2>最多対戦相手</h2>
+
+        <span class="debug-label">
+          確認用
+        </span>
+
+      </div>
+
+      <p class="section-description">
+        同じRoleで最も多く対戦している相手を表示します。
+      </p>
+
+
+      <div class="opponent-section">
+
+        <h3>Leader</h3>
+
+        <div
+          id="leaderOpponentEmpty"
+          class="empty-message"
+        >
+          Leaderの対戦履歴はまだありません。
+        </div>
+
+        <div id="leaderOpponentList"></div>
+
+      </div>
+
+
+      <div class="opponent-section">
+
+        <h3>Follower</h3>
+
+        <div
+          id="followerOpponentEmpty"
+          class="empty-message"
+        >
+          Followerの対戦履歴はまだありません。
+        </div>
+
+        <div id="followerOpponentList"></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script src="script.js?v=17"></script>
+
+</body>
+
+</html>

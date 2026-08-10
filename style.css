@@ -1,0 +1,671 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f4f5f7;
+  color: #222;
+  font-family: Arial, "Noto Sans JP", sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+
+/* ========================================
+   ヘッダー
+======================================== */
+
+.app-header {
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.app-header p {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   カード
+======================================== */
+
+.card {
+  margin-bottom: 18px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+
+/* ========================================
+   入力
+======================================== */
+
+.field-label {
+  display: block;
+  margin: 22px 0 8px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.name-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 16px;
+}
+
+
+/* ========================================
+   Role
+======================================== */
+
+.role-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 4px;
+}
+
+.role-selector label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.role-selector input {
+  margin: 0;
+}
+
+
+/* ========================================
+   Judge
+======================================== */
+
+.judge-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.judge-selector input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+
+/* ========================================
+   ボタン
+======================================== */
+
+.add-button,
+.generate-button {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.add-button:hover,
+.generate-button:hover {
+  background: #444;
+}
+
+.save-note {
+  margin-top: 10px;
+  color: #888;
+  font-size: 11px;
+  text-align: center;
+}
+
+.reset-button {
+  display: block;
+  margin: 12px auto 0;
+  padding: 5px 8px;
+  border: 0;
+  background: transparent;
+  color: #777;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  color: #222;
+}
+
+
+/* ========================================
+   参加者一覧
+======================================== */
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#participantCount {
+  color: #777;
+  font-size: 14px;
+}
+
+.empty-message {
+  padding: 20px 0 8px;
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+/* ========================================
+   参加者
+======================================== */
+
+.participant-item {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.participant-item:last-child {
+  border-bottom: none;
+}
+
+.participant-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    76px
+    66px
+    28px
+    34px;
+
+  align-items: center;
+  gap: 6px;
+
+  min-height: 54px;
+  padding: 8px 4px;
+
+  cursor: pointer;
+}
+
+.participant-row.is-resting {
+  opacity: 0.48;
+}
+
+.participant-main {
+  min-width: 0;
+}
+
+.participant-name {
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-rest-status {
+  margin-top: 2px;
+  color: #777;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.participant-role {
+  padding: 5px 8px;
+  background: #eee;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.participant-count {
+  color: #555;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.participant-judge {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.participant-judge.unavailable {
+  color: #aaa;
+}
+
+.delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #eee;
+  color: #555;
+
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
+/* ========================================
+   参加者操作
+======================================== */
+
+.participant-action-panel {
+  padding: 0 4px 10px;
+}
+
+.participant-action-button {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+  color: #444;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.participant-action-button:hover {
+  background: #f0f0f0;
+}
+
+.participant-action-note {
+  margin-top: 6px;
+  color: #999;
+  font-size: 10px;
+  text-align: center;
+}
+
+
+/* ========================================
+   説明
+======================================== */
+
+.section-description {
+  margin: 10px 0 18px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   Round結果
+======================================== */
+
+.hidden {
+  display: none;
+}
+
+.round-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+#battleCount {
+  color: #777;
+  font-size: 14px;
+}
+
+
+/* ========================================
+   Battle
+======================================== */
+
+.battle-card {
+  margin-bottom: 18px;
+  padding: 16px;
+  background: #f7f7f8;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+}
+
+.battle-card:last-child {
+  margin-bottom: 0;
+}
+
+.battle-title {
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.pair-box {
+  padding: 12px;
+  background: #fff;
+  border-radius: 9px;
+}
+
+.pair-label {
+  margin-bottom: 8px;
+  color: #777;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.pair-person {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.pair-person:last-child {
+  margin-bottom: 0;
+}
+
+.person-role {
+  color: #777;
+}
+
+.person-name {
+  font-weight: bold;
+}
+
+.vs {
+  padding: 8px 0;
+  color: #777;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* ========================================
+   Judge
+======================================== */
+
+.judge-box {
+  margin-top: 14px;
+  padding: 12px;
+  background: #eceef1;
+  border-radius: 9px;
+}
+
+.judge-box-title {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.judge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.judge-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 6px 9px;
+
+  background: #fff;
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.judge-role {
+  color: #888;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.judge-warning {
+  color: #777;
+  font-size: 13px;
+}
+
+
+/* ========================================
+   未出場
+======================================== */
+
+.waiting-area {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e4e4e4;
+}
+
+.waiting-area h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+#waitingList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.waiting-person {
+  padding: 6px 10px;
+  background: #eee;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+
+/* ========================================
+   履歴
+======================================== */
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.debug-label {
+  padding: 4px 8px;
+  background: #eee;
+  border-radius: 20px;
+  color: #666;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.history-row:last-child {
+  border-bottom: none;
+}
+
+.history-names {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.history-count {
+  flex-shrink: 0;
+  color: #666;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+
+/* ========================================
+   最多対戦相手
+======================================== */
+
+.opponent-section {
+  margin-top: 22px;
+}
+
+.opponent-section + .opponent-section {
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.opponent-section h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.opponent-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(70px, 1fr)
+    24px
+    minmax(0, 2fr)
+    48px;
+
+  align-items: center;
+  gap: 6px;
+
+  padding: 9px 4px;
+
+  border-bottom: 1px solid #eee;
+}
+
+.opponent-row:last-child {
+  border-bottom: none;
+}
+
+.opponent-name {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.opponent-arrow {
+  color: #999;
+  text-align: center;
+}
+
+.opponent-targets {
+  min-width: 0;
+  color: #333;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.opponent-count {
+  color: #666;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: right;
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   スマートフォン
+======================================== */
+
+@media (max-width: 480px) {
+
+  .container {
+    padding: 18px 12px 32px;
+  }
+
+  .app-header h1 {
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .participant-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      64px
+      58px
+      24px
+      30px;
+
+    gap: 4px;
+  }
+
+  .participant-role {
+    font-size: 11px;
+    padding: 5px 5px;
+  }
+
+  .participant-count {
+    font-size: 10px;
+  }
+
+  .delete-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .opponent-row {
+    grid-template-columns:
+      minmax(55px, 1fr)
+      20px
+      minmax(0, 2fr)
+      42px;
+
+    gap: 4px;
+  }
+}
