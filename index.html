@@ -7,7 +7,7 @@
 
   <title>Hustle Battle Generator</title>
 
-  <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="style.css?v=18">
 </head>
 
 <body>
@@ -202,84 +202,96 @@
 
 
     <!-- Pair履歴 -->
-    <section class="card">
+    <details class="card history-details">
 
-      <div class="history-header">
+      <summary class="history-summary">
 
-        <h2>Pair履歴</h2>
+        <span>Pair履歴</span>
 
-        <span class="debug-label">
+        <span class="history-summary-note">
           確認用
         </span>
 
+      </summary>
+
+
+      <div class="history-content">
+
+        <p class="section-description">
+          過去に組んだペアと回数を確認できます。
+        </p>
+
+
+        <div
+          id="pairHistoryEmpty"
+          class="empty-message"
+        >
+          Pair履歴はまだありません。
+        </div>
+
+
+        <div id="pairHistoryList"></div>
+
       </div>
 
-      <p class="section-description">
-        過去に組んだペアと回数を確認できます。
-      </p>
-
-      <div
-        id="pairHistoryEmpty"
-        class="empty-message"
-      >
-        Pair履歴はまだありません。
-      </div>
-
-      <div id="pairHistoryList"></div>
-
-    </section>
+    </details>
 
 
     <!-- 最多対戦相手 -->
-    <section class="card">
+    <details class="card history-details">
 
-      <div class="history-header">
+      <summary class="history-summary">
 
-        <h2>最多対戦相手</h2>
+        <span>最多対戦相手</span>
 
-        <span class="debug-label">
+        <span class="history-summary-note">
           確認用
         </span>
 
-      </div>
-
-      <p class="section-description">
-        同じRoleで最も多く対戦している相手を表示します。
-      </p>
+      </summary>
 
 
-      <div class="opponent-section">
+      <div class="history-content">
 
-        <h3>Leader</h3>
+        <p class="section-description">
+          同じRoleで最も多く対戦している相手を表示します。
+        </p>
 
-        <div
-          id="leaderOpponentEmpty"
-          class="empty-message"
-        >
-          Leaderの対戦履歴はまだありません。
+
+        <div class="opponent-section">
+
+          <h3>Leader</h3>
+
+          <div
+            id="leaderOpponentEmpty"
+            class="empty-message"
+          >
+            Leaderの対戦履歴はまだありません。
+          </div>
+
+          <div id="leaderOpponentList"></div>
+
         </div>
 
-        <div id="leaderOpponentList"></div>
 
-      </div>
+        <div class="opponent-section">
 
+          <h3>Follower</h3>
 
-      <div class="opponent-section">
+          <div
+            id="followerOpponentEmpty"
+            class="empty-message"
+          >
+            Followerの対戦履歴はまだありません。
+          </div>
 
-        <h3>Follower</h3>
+          <div id="followerOpponentList"></div>
 
-        <div
-          id="followerOpponentEmpty"
-          class="empty-message"
-        >
-          Followerの対戦履歴はまだありません。
         </div>
 
-        <div id="followerOpponentList"></div>
-
       </div>
 
-    </section>
+    </details>
 
   </main>
 

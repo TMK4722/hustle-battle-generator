@@ -453,12 +453,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-
   padding: 6px 9px;
-
   background: #fff;
   border-radius: 20px;
-
   font-size: 13px;
   font-weight: 600;
 }
@@ -505,30 +502,76 @@ body {
 
 
 /* ========================================
-   履歴
+   折りたたみ履歴
 ======================================== */
 
-.history-header {
+.history-details {
+  padding: 0;
+  overflow: hidden;
+}
+
+.history-summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  padding: 18px 20px;
+
+  font-size: 18px;
+  font-weight: bold;
+
+  cursor: pointer;
+  list-style: none;
 }
 
-.debug-label {
+.history-summary::-webkit-details-marker {
+  display: none;
+}
+
+.history-summary::after {
+  content: "＋";
+  margin-left: 10px;
+  color: #777;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.history-details[open] .history-summary::after {
+  content: "−";
+}
+
+.history-summary-note {
+  margin-left: auto;
+  margin-right: 10px;
+
   padding: 4px 8px;
+
   background: #eee;
   border-radius: 20px;
+
   color: #666;
   font-size: 11px;
   font-weight: bold;
 }
+
+.history-content {
+  padding: 0 20px 20px;
+  border-top: 1px solid #eee;
+}
+
+
+/* ========================================
+   履歴
+======================================== */
 
 .history-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+
   padding: 10px 4px;
+
   border-bottom: 1px solid #eee;
 }
 
@@ -632,6 +675,19 @@ body {
 
   .card {
     padding: 18px;
+  }
+
+  .history-details {
+    padding: 0;
+  }
+
+  .history-summary {
+    padding: 16px 18px;
+    font-size: 17px;
+  }
+
+  .history-content {
+    padding: 0 18px 18px;
   }
 
   .participant-row {
