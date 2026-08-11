@@ -2912,48 +2912,19 @@ async function resetRoundData() {
   }
 
 
-  const firstConfirm =
+  const confirmed =
     confirm(
-      "Roundデータをリセットします。\n\n" +
-      "削除されるデータ：\n" +
+      "Roundデータをリセットしますか？\n\n" +
+      "リセットされるもの：\n" +
       "・Round番号\n" +
-      "・Dance回数\n" +
-      "・Judge回数\n" +
+      "・Dance / Judge回数\n" +
       "・Pair履歴\n" +
       "・対戦履歴\n\n" +
-      "参加者の登録情報は残ります。\n\n" +
-      "本当に続けますか？"
+      "参加者の登録情報は残ります。"
     );
 
 
-  if (!firstConfirm) {
-    return;
-  }
-
-
-  const resetWord =
-    prompt(
-      "最終確認です。\n\n" +
-      "リセットを実行する場合は\n" +
-      "半角英大文字で RESET と入力してください。"
-    );
-
-
-  if (resetWord === null) {
-    return;
-  }
-
-
-  if (
-    resetWord.trim() !==
-    "RESET"
-  ) {
-
-    alert(
-      "RESET と正しく入力されなかったため、\n" +
-      "リセットを中止しました。"
-    );
-
+  if (!confirmed) {
     return;
   }
 
@@ -2965,11 +2936,14 @@ async function resetRoundData() {
   pairHistory =
     {};
 
+
   leaderOpponentHistory =
     {};
 
+
   followerOpponentHistory =
     {};
+
 
   lastRoundData =
     null;
@@ -3000,12 +2974,6 @@ async function resetRoundData() {
 
 
   renderAll();
-
-
-  alert(
-    "Roundデータをリセットしました。\n" +
-    "参加者の登録情報は残っています。"
-  );
 }
 
 
