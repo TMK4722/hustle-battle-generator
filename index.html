@@ -7,61 +7,30 @@
 
   <title>Hustle Battle Generator</title>
 
-  <link rel="stylesheet" href="style.css?v=23">
+  <link rel="stylesheet" href="style.css?v=24">
 </head>
 
 <body>
 
   <main class="container">
 
+    <!-- =====================================
+         ヘッダー
+    ====================================== -->
     <header class="app-header">
+
       <h1>Hustle Battle Generator</h1>
 
       <p>
-        参加者を登録して、バトルの組み合わせを作成します。
+        Hustle Practice Battle
       </p>
+
     </header>
 
 
-    <!-- Firebase -->
-    <section class="card">
-
-      <div class="list-header">
-        <h2>Firebase接続</h2>
-        <span id="firebaseStatus">確認中</span>
-      </div>
-
-      <p class="section-description">
-        参加者情報・Round情報はFirebaseを通じて共有されます。
-      </p>
-
-      <button
-        type="button"
-        id="adminLoginButton"
-        class="add-button"
-      >
-        管理者としてGoogleログイン
-      </button>
-
-      <button
-        type="button"
-        id="adminLogoutButton"
-        class="reset-button hidden"
-      >
-        管理者モードを終了
-      </button>
-
-      <div
-        id="firebaseUserInfo"
-        class="save-note"
-      >
-        Firebaseへ接続しています。
-      </div>
-
-    </section>
-
-
-    <!-- 参加登録 / 管理者参加者追加 -->
+    <!-- =====================================
+         参加登録 / 管理者参加者追加
+    ====================================== -->
     <section
       id="registrationCard"
       class="card"
@@ -160,13 +129,21 @@
     </section>
 
 
-    <!-- 参加者一覧 -->
+    <!-- =====================================
+         参加者一覧
+    ====================================== -->
     <section class="card">
 
       <div class="list-header">
-        <h2>参加者一覧</h2>
-        <span id="participantCount">0人</span>
+
+        <h2>参加者</h2>
+
+        <span id="participantCount">
+          0人
+        </span>
+
       </div>
+
 
       <div
         id="emptyMessage"
@@ -175,22 +152,78 @@
         参加者はまだ登録されていません。
       </div>
 
+
       <div id="participantList"></div>
 
     </section>
 
 
-    <!-- 管理者：Round -->
+    <!-- =====================================
+         現在のRound
+         一般参加者にも表示
+    ====================================== -->
+    <section
+      id="roundResultCard"
+      class="card round-result-card hidden"
+    >
+
+      <div class="round-header">
+
+        <div>
+
+          <div class="round-label">
+            CURRENT ROUND
+          </div>
+
+          <h2 id="roundTitle">
+            Round 1
+          </h2>
+
+        </div>
+
+
+        <span id="battleCount"></span>
+
+      </div>
+
+
+      <div id="battleList"></div>
+
+
+      <div
+        id="waitingArea"
+        class="waiting-area hidden"
+      >
+
+        <h3>
+          今回未出場
+        </h3>
+
+        <div id="waitingList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         管理者：Round生成
+    ====================================== -->
     <section
       id="roundControlCard"
-      class="card hidden"
+      class="card admin-card hidden"
     >
+
+      <div class="admin-section-label">
+        ADMIN
+      </div>
 
       <h2>Round生成</h2>
 
       <p class="section-description">
         出場回数・Pair履歴・対戦履歴・Judge回数を考慮して生成します。
       </p>
+
 
       <button
         type="button"
@@ -200,9 +233,11 @@
         Generate Round
       </button>
 
+
       <div class="save-note">
-        Round・D/J回数・履歴もFirebaseへ保存されます。
+        Round・D/J回数・履歴はFirebaseへ保存されます。
       </div>
+
 
       <button
         type="button"
@@ -215,39 +250,9 @@
     </section>
 
 
-    <!-- Round結果 -->
-    <section
-      id="roundResultCard"
-      class="card hidden"
-    >
-
-      <div class="round-header">
-
-        <h2 id="roundTitle">
-          Round 1
-        </h2>
-
-        <span id="battleCount"></span>
-
-      </div>
-
-      <div id="battleList"></div>
-
-      <div
-        id="waitingArea"
-        class="waiting-area hidden"
-      >
-
-        <h3>今回未出場</h3>
-
-        <div id="waitingList"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- Pair履歴 -->
+    <!-- =====================================
+         管理者：Pair履歴
+    ====================================== -->
     <details
       id="pairHistoryDetails"
       class="card history-details hidden"
@@ -255,19 +260,23 @@
 
       <summary class="history-summary">
 
-        <span>Pair履歴</span>
+        <span>
+          Pair履歴
+        </span>
 
         <span class="history-summary-note">
-          確認用
+          管理者
         </span>
 
       </summary>
+
 
       <div class="history-content">
 
         <p class="section-description">
           過去に組んだペアと回数を確認できます。
         </p>
+
 
         <div
           id="pairHistoryEmpty"
@@ -276,6 +285,7 @@
           Pair履歴はまだありません。
         </div>
 
+
         <div id="pairHistoryList"></div>
 
       </div>
@@ -283,7 +293,9 @@
     </details>
 
 
-    <!-- 対戦履歴 -->
+    <!-- =====================================
+         管理者：最多対戦相手
+    ====================================== -->
     <details
       id="opponentHistoryDetails"
       class="card history-details hidden"
@@ -291,13 +303,16 @@
 
       <summary class="history-summary">
 
-        <span>最多対戦相手</span>
+        <span>
+          最多対戦相手
+        </span>
 
         <span class="history-summary-note">
-          確認用
+          管理者
         </span>
 
       </summary>
+
 
       <div class="history-content">
 
@@ -308,7 +323,10 @@
 
         <div class="opponent-section">
 
-          <h3>Leader</h3>
+          <h3>
+            Leader
+          </h3>
+
 
           <div
             id="leaderOpponentEmpty"
@@ -317,6 +335,7 @@
             Leaderの対戦履歴はまだありません。
           </div>
 
+
           <div id="leaderOpponentList"></div>
 
         </div>
@@ -324,7 +343,10 @@
 
         <div class="opponent-section">
 
-          <h3>Follower</h3>
+          <h3>
+            Follower
+          </h3>
+
 
           <div
             id="followerOpponentEmpty"
@@ -332,6 +354,7 @@
           >
             Followerの対戦履歴はまだありません。
           </div>
+
 
           <div id="followerOpponentList"></div>
 
@@ -341,13 +364,74 @@
 
     </details>
 
+
+    <!-- =====================================
+         管理・Firebase接続
+         通常時は折りたたみ
+    ====================================== -->
+    <details class="system-details">
+
+      <summary>
+        管理・接続
+      </summary>
+
+
+      <div class="system-content">
+
+        <div class="list-header">
+
+          <span class="system-title">
+            Firebase
+          </span>
+
+          <span id="firebaseStatus">
+            確認中
+          </span>
+
+        </div>
+
+
+        <div
+          id="firebaseUserInfo"
+          class="system-info"
+        >
+          Firebaseへ接続しています。
+        </div>
+
+
+        <button
+          type="button"
+          id="adminLoginButton"
+          class="secondary-button"
+        >
+          管理者としてGoogleログイン
+        </button>
+
+
+        <button
+          type="button"
+          id="adminLogoutButton"
+          class="reset-button hidden"
+        >
+          管理者モードを終了
+        </button>
+
+      </div>
+
+    </details>
+
   </main>
 
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"></script>
 
+
+  <!-- v23のscript.jsをそのまま使用 -->
   <script src="script.js?v=23"></script>
 
 </body>

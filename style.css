@@ -2,18 +2,32 @@
   box-sizing: border-box;
 }
 
+
+/* ========================================
+   基本
+======================================== */
+
 body {
   margin: 0;
   background: #f4f5f7;
   color: #222;
-  font-family: Arial, "Noto Sans JP", sans-serif;
+  font-family:
+    Arial,
+    "Noto Sans JP",
+    sans-serif;
 }
+
 
 .container {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: 24px 16px 40px;
+  padding: 24px 16px 48px;
+}
+
+
+.hidden {
+  display: none !important;
 }
 
 
@@ -22,41 +36,56 @@ body {
 ======================================== */
 
 .app-header {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
+
 
 .app-header h1 {
-  margin: 0 0 8px;
-  font-size: 28px;
+  margin: 0;
+  font-size: 27px;
+  line-height: 1.2;
 }
 
+
 .app-header p {
-  margin: 0;
-  color: #666;
-  font-size: 15px;
-  line-height: 1.6;
+  margin: 6px 0 0;
+  color: #888;
+  font-size: 13px;
+  letter-spacing: 0.03em;
 }
 
 
 /* ========================================
-   共通カード
+   カード
 ======================================== */
 
 .card {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   padding: 20px;
+
   background: #fff;
+
   border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+
+  box-shadow:
+    0 2px 10px
+    rgba(0, 0, 0, 0.06);
 }
+
 
 .card h2 {
   margin: 0;
   font-size: 20px;
 }
 
-.hidden {
-  display: none !important;
+
+.section-description {
+  margin: 9px 0 18px;
+
+  color: #666;
+
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 
@@ -66,17 +95,24 @@ body {
 
 .field-label {
   display: block;
-  margin: 22px 0 8px;
-  font-size: 15px;
+
+  margin: 20px 0 8px;
+
+  font-size: 14px;
   font-weight: bold;
 }
 
+
 .name-input {
   width: 100%;
+
   padding: 13px 14px;
+
   border: 1px solid #bbb;
-  border-radius: 8px;
+  border-radius: 9px;
+
   background: #fff;
+
   font-size: 16px;
 }
 
@@ -88,16 +124,23 @@ body {
 .role-selector {
   display: flex;
   flex-wrap: wrap;
+
   gap: 18px;
+
   margin-bottom: 4px;
 }
 
+
 .role-selector label {
   display: flex;
+
   align-items: center;
+
   gap: 6px;
+
   cursor: pointer;
 }
+
 
 .role-selector input {
   margin: 0;
@@ -110,42 +153,55 @@ body {
 
 .judge-selector {
   display: flex;
+
   align-items: center;
+
   gap: 8px;
-  margin-bottom: 24px;
+
+  margin-bottom: 22px;
+
   cursor: pointer;
 }
+
 
 .judge-selector input {
   width: 18px;
   height: 18px;
+
   margin: 0;
 }
 
 
 /* ========================================
-   ボタン
+   メインボタン
 ======================================== */
 
 .add-button,
 .generate-button {
   display: block;
+
   width: 100%;
-  margin: 0;
+
   padding: 14px;
+
   border: 0;
-  border-radius: 8px;
+  border-radius: 9px;
+
   background: #222;
   color: #fff;
+
   font-size: 16px;
   font-weight: bold;
+
   cursor: pointer;
 }
+
 
 .add-button:hover,
 .generate-button:hover {
   background: #444;
 }
+
 
 .add-button:disabled,
 .generate-button:disabled {
@@ -153,175 +209,265 @@ body {
   cursor: default;
 }
 
-.reset-button {
+
+/* ========================================
+   サブボタン
+======================================== */
+
+.secondary-button {
   display: block;
-  margin: 12px auto 0;
-  padding: 5px 8px;
-  border: 0;
-  background: transparent;
-  color: #777;
-  font-size: 12px;
-  text-decoration: underline;
+
+  width: 100%;
+
+  margin-top: 14px;
+
+  padding: 12px;
+
+  border: 1px solid #ccc;
+  border-radius: 9px;
+
+  background: #fff;
+  color: #333;
+
+  font-size: 14px;
+  font-weight: bold;
+
   cursor: pointer;
 }
 
-.save-note {
-  margin-top: 10px;
-  color: #888;
-  font-size: 11px;
-  line-height: 1.5;
-  text-align: center;
-  overflow-wrap: anywhere;
+
+.secondary-button:hover {
+  background: #f5f5f5;
 }
 
-.section-description {
-  margin: 10px 0 18px;
-  color: #666;
-  font-size: 14px;
-  line-height: 1.6;
+
+.reset-button {
+  display: block;
+
+  margin: 12px auto 0;
+
+  padding: 5px 8px;
+
+  border: 0;
+
+  background: transparent;
+  color: #777;
+
+  font-size: 12px;
+  text-decoration: underline;
+
+  cursor: pointer;
+}
+
+
+.save-note {
+  margin-top: 10px;
+
+  color: #999;
+
+  font-size: 11px;
+  line-height: 1.5;
+
+  text-align: center;
 }
 
 
 /* ========================================
-   一覧
+   一覧共通
 ======================================== */
 
 .list-header {
   display: flex;
+
   align-items: center;
   justify-content: space-between;
+
   gap: 12px;
+
   margin-bottom: 10px;
 }
+
 
 #participantCount,
 #firebaseStatus {
   color: #777;
-  font-size: 14px;
+
+  font-size: 13px;
 }
+
 
 .empty-message {
   padding: 20px 0 8px;
-  color: #888;
+
+  color: #999;
+
   font-size: 14px;
+
   text-align: center;
 }
 
 
 /* ========================================
-   参加者
+   参加者一覧
 ======================================== */
 
 .participant-item {
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom:
+    1px solid #e9e9e9;
 }
+
 
 .participant-item:last-child {
   border-bottom: none;
 }
 
+
 .participant-row {
   display: grid;
+
   grid-template-columns:
     minmax(0, 1fr)
     76px
     66px
     28px
     34px;
+
   align-items: center;
+
   gap: 6px;
+
   min-height: 54px;
+
   padding: 8px 4px;
 }
+
 
 .participant-row.can-manage {
   cursor: pointer;
 }
 
+
 .participant-row.is-resting {
-  opacity: 0.48;
+  opacity: 0.45;
 }
+
 
 .participant-main {
   min-width: 0;
 }
 
+
 .participant-name-line {
   display: flex;
+
   align-items: center;
+
   gap: 6px;
+
   min-width: 0;
 }
 
+
 .participant-name {
   min-width: 0;
+
   font-size: 16px;
   font-weight: 600;
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+
 .participant-self-badge {
   flex-shrink: 0;
+
   padding: 2px 5px;
+
   border-radius: 20px;
+
   background: #222;
   color: #fff;
+
   font-size: 9px;
   font-weight: bold;
 }
 
+
 .participant-rest-status {
   margin-top: 2px;
+
   color: #777;
+
   font-size: 10px;
   font-weight: bold;
 }
 
+
 .participant-role {
   padding: 5px 8px;
+
   background: #eee;
+
   border-radius: 20px;
+
   font-size: 12px;
   font-weight: bold;
+
   text-align: center;
 }
 
+
 .participant-count {
   color: #555;
+
   font-size: 11px;
   font-weight: bold;
+
   text-align: center;
+
   white-space: nowrap;
 }
+
 
 .participant-judge {
   font-size: 12px;
   font-weight: bold;
+
   text-align: center;
+
   white-space: nowrap;
 }
+
 
 .participant-judge.unavailable {
   color: #aaa;
 }
 
+
 .delete-button {
   display: flex;
+
   align-items: center;
   justify-content: center;
+
   width: 32px;
   height: 32px;
-  margin: 0;
+
   padding: 0;
+
   border: 0;
   border-radius: 50%;
+
   background: #eee;
   color: #555;
+
   font-size: 20px;
+
   cursor: pointer;
 }
+
 
 .delete-placeholder {
   width: 32px;
@@ -337,90 +483,168 @@ body {
   padding: 0 4px 10px;
 }
 
+
 .participant-action-button {
   width: 100%;
+
   padding: 9px 12px;
+
   border: 1px solid #ddd;
   border-radius: 8px;
+
   background: #fafafa;
+
   color: #444;
+
   font-size: 13px;
   font-weight: bold;
+
   cursor: pointer;
 }
 
+
 .participant-action-note {
   margin-top: 6px;
+
   color: #999;
+
   font-size: 10px;
+
   text-align: center;
 }
 
 
 /* ========================================
-   Round
+   Current Round
 ======================================== */
+
+.round-result-card {
+  border:
+    1px solid #e2e2e2;
+}
+
+
+.round-label {
+  margin-bottom: 3px;
+
+  color: #999;
+
+  font-size: 10px;
+  font-weight: bold;
+
+  letter-spacing: 0.12em;
+}
+
 
 .round-header {
   display: flex;
+
   align-items: center;
   justify-content: space-between;
+
+  gap: 12px;
+
   margin-bottom: 18px;
 }
+
 
 #battleCount {
   color: #777;
-  font-size: 14px;
+
+  font-size: 13px;
+
+  white-space: nowrap;
 }
+
+
+/* ========================================
+   Battle
+======================================== */
 
 .battle-card {
   margin-bottom: 18px;
-  padding: 16px;
+
+  padding: 15px;
+
   background: #f7f7f8;
-  border: 1px solid #e6e6e6;
+
+  border:
+    1px solid #e6e6e6;
+
   border-radius: 12px;
 }
 
+
+.battle-card:last-child {
+  margin-bottom: 0;
+}
+
+
 .battle-title {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+
   font-size: 15px;
   font-weight: bold;
 }
 
+
 .pair-box {
   padding: 12px;
+
   background: #fff;
+
   border-radius: 9px;
 }
 
+
 .pair-label {
   margin-bottom: 8px;
-  color: #777;
-  font-size: 12px;
+
+  color: #888;
+
+  font-size: 11px;
   font-weight: bold;
 }
 
+
 .pair-person {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+
+  grid-template-columns:
+    72px
+    minmax(0, 1fr);
+
   gap: 8px;
+
   margin-bottom: 6px;
+
   font-size: 14px;
 }
 
-.person-role {
-  color: #777;
+
+.pair-person:last-child {
+  margin-bottom: 0;
 }
+
+
+.person-role {
+  color: #888;
+}
+
 
 .person-name {
   font-weight: bold;
 }
 
+
 .vs {
   padding: 8px 0;
-  color: #777;
-  font-size: 13px;
+
+  color: #999;
+
+  font-size: 12px;
   font-weight: bold;
+
   text-align: center;
 }
 
@@ -430,74 +654,128 @@ body {
 ======================================== */
 
 .judge-box {
-  margin-top: 14px;
-  padding: 12px;
-  background: #eceef1;
+  margin-top: 13px;
+
+  padding: 11px;
+
+  background: #e9ebee;
+
   border-radius: 9px;
 }
 
+
 .judge-box-title {
   margin-bottom: 8px;
+
   color: #666;
-  font-size: 12px;
+
+  font-size: 11px;
   font-weight: bold;
 }
 
+
 .judge-list {
   display: flex;
+
   flex-wrap: wrap;
-  gap: 8px;
+
+  gap: 7px;
 }
+
 
 .judge-person {
   display: inline-flex;
+
   align-items: center;
+
   gap: 5px;
+
   padding: 6px 9px;
+
   background: #fff;
+
   border-radius: 20px;
+
   font-size: 13px;
   font-weight: 600;
 }
 
+
 .judge-role {
   color: #888;
-  font-size: 11px;
+
+  font-size: 10px;
   font-weight: normal;
 }
 
+
 .judge-warning {
   color: #777;
-  font-size: 13px;
+
+  font-size: 12px;
 }
 
 
 /* ========================================
-   未出場
+   今回未出場
 ======================================== */
 
 .waiting-area {
   margin-top: 22px;
+
   padding-top: 18px;
-  border-top: 1px solid #e4e4e4;
+
+  border-top:
+    1px solid #e4e4e4;
 }
+
 
 .waiting-area h3 {
   margin: 0 0 10px;
-  font-size: 15px;
+
+  font-size: 14px;
 }
+
 
 #waitingList {
   display: flex;
+
   flex-wrap: wrap;
-  gap: 8px;
+
+  gap: 7px;
 }
+
 
 .waiting-person {
   padding: 6px 10px;
+
   background: #eee;
+
   border-radius: 20px;
-  font-size: 13px;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   管理者
+======================================== */
+
+.admin-card {
+  border:
+    1px solid #dedede;
+}
+
+
+.admin-section-label {
+  margin-bottom: 5px;
+
+  color: #999;
+
+  font-size: 10px;
+  font-weight: bold;
+
+  letter-spacing: 0.12em;
 }
 
 
@@ -507,122 +785,254 @@ body {
 
 .history-details {
   padding: 0;
+
   overflow: hidden;
 }
 
+
 .history-summary {
   display: flex;
+
   align-items: center;
   justify-content: space-between;
-  padding: 18px 20px;
-  font-size: 18px;
+
+  padding: 17px 20px;
+
+  font-size: 17px;
   font-weight: bold;
+
   cursor: pointer;
+
   list-style: none;
 }
+
 
 .history-summary::-webkit-details-marker {
   display: none;
 }
 
+
 .history-summary::after {
   content: "＋";
+
   margin-left: 10px;
+
   color: #777;
+
   font-size: 20px;
   font-weight: normal;
 }
 
-.history-details[open] .history-summary::after {
+
+.history-details[open]
+.history-summary::after {
   content: "−";
 }
+
 
 .history-summary-note {
   margin-left: auto;
   margin-right: 10px;
+
   padding: 4px 8px;
+
   background: #eee;
+
   border-radius: 20px;
+
   color: #666;
-  font-size: 11px;
+
+  font-size: 10px;
+  font-weight: bold;
 }
+
 
 .history-content {
   padding: 0 20px 20px;
-  border-top: 1px solid #eee;
+
+  border-top:
+    1px solid #eee;
 }
+
 
 .history-row {
   display: flex;
+
+  align-items: center;
   justify-content: space-between;
+
   gap: 12px;
+
   padding: 10px 4px;
-  border-bottom: 1px solid #eee;
+
+  border-bottom:
+    1px solid #eee;
 }
 
+
 .history-names {
+  min-width: 0;
+
   font-size: 14px;
   font-weight: 600;
 }
 
+
 .history-count {
   flex-shrink: 0;
+
   color: #666;
+
   font-size: 13px;
   font-weight: bold;
 }
 
 
 /* ========================================
-   対戦
+   対戦履歴
 ======================================== */
 
 .opponent-section {
   margin-top: 22px;
 }
 
-.opponent-section + .opponent-section {
+
+.opponent-section +
+.opponent-section {
   padding-top: 20px;
-  border-top: 1px solid #eee;
+
+  border-top:
+    1px solid #eee;
 }
+
 
 .opponent-section h3 {
   margin: 0 0 8px;
+
   font-size: 16px;
 }
 
+
 .opponent-row {
   display: grid;
+
   grid-template-columns:
     minmax(70px, 1fr)
     24px
     minmax(0, 2fr)
     48px;
+
+  align-items: center;
+
   gap: 6px;
+
   padding: 9px 4px;
-  border-bottom: 1px solid #eee;
+
+  border-bottom:
+    1px solid #eee;
 }
 
+
 .opponent-name {
+  min-width: 0;
+
   font-size: 14px;
   font-weight: 600;
 }
 
+
 .opponent-arrow {
   color: #999;
+
   text-align: center;
 }
 
+
 .opponent-targets {
+  min-width: 0;
+
   font-size: 14px;
+
   overflow-wrap: anywhere;
 }
 
+
 .opponent-count {
   color: #666;
+
   font-size: 12px;
   font-weight: bold;
+
   text-align: right;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   管理・接続
+======================================== */
+
+.system-details {
+  margin-top: 28px;
+
+  color: #777;
+}
+
+
+.system-details > summary {
+  padding: 10px 4px;
+
+  color: #888;
+
+  font-size: 12px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  list-style: none;
+}
+
+
+.system-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+
+.system-details > summary::before {
+  content: "⚙ ";
+}
+
+
+.system-content {
+  margin-top: 6px;
+
+  padding: 16px;
+
+  background: #fff;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 2px 8px
+    rgba(0, 0, 0, 0.05);
+}
+
+
+.system-title {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+
+.system-info {
+  color: #888;
+
+  font-size: 11px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
 }
 
 
@@ -633,20 +1043,47 @@ body {
 @media (max-width: 480px) {
 
   .container {
-    padding: 18px 12px 32px;
+    padding:
+      18px
+      12px
+      40px;
   }
+
+
+  .app-header {
+    margin-bottom: 18px;
+  }
+
 
   .app-header h1 {
-    font-size: 24px;
+    font-size: 23px;
   }
 
+
   .card {
-    padding: 18px;
+    padding: 17px;
   }
+
 
   .history-details {
     padding: 0;
   }
+
+
+  .history-summary {
+    padding:
+      16px
+      17px;
+  }
+
+
+  .history-content {
+    padding:
+      0
+      17px
+      17px;
+  }
+
 
   .participant-row {
     grid-template-columns:
@@ -655,17 +1092,22 @@ body {
       58px
       24px
       30px;
+
     gap: 4px;
   }
 
+
   .participant-role {
     padding: 5px;
+
     font-size: 11px;
   }
+
 
   .participant-count {
     font-size: 10px;
   }
+
 
   .delete-button,
   .delete-placeholder {
@@ -673,12 +1115,24 @@ body {
     height: 30px;
   }
 
+
+  .battle-card {
+    padding: 13px;
+  }
+
+
+  .pair-box {
+    padding: 11px;
+  }
+
+
   .opponent-row {
     grid-template-columns:
       minmax(55px, 1fr)
       20px
       minmax(0, 2fr)
       42px;
+
     gap: 4px;
   }
 }
