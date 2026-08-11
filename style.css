@@ -683,7 +683,6 @@ body.admin-mode .system-details {
 }
 
 
-/* 自分が関係するBattle */
 .battle-card.my-battle {
   border: 2px solid #222;
 }
@@ -765,7 +764,6 @@ body.admin-mode .system-details {
 }
 
 
-/* 自分の名前 */
 .pair-person.my-assignment {
   background: #222;
   color: #fff;
@@ -851,7 +849,6 @@ body.admin-mode .system-details {
 }
 
 
-/* 自分がJudge */
 .judge-person.my-judge {
   background: #222;
   color: #fff;
@@ -944,6 +941,115 @@ body.admin-mode .system-details {
   font-weight: bold;
 
   letter-spacing: 0.12em;
+}
+
+
+/* ========================================
+   危険操作
+======================================== */
+
+.danger-details {
+  margin-top: 24px;
+
+  border-top: 1px solid #eee;
+}
+
+
+.danger-details > summary {
+  padding: 16px 2px 4px;
+
+  color: #999;
+
+  font-size: 11px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  list-style: none;
+}
+
+
+.danger-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+
+.danger-details > summary::before {
+  content: "⚠ ";
+}
+
+
+.danger-content {
+  margin-top: 12px;
+
+  padding: 14px;
+
+  border: 1px solid #e1d3d3;
+  border-radius: 10px;
+
+  background: #fcf8f8;
+}
+
+
+.danger-title {
+  margin-bottom: 8px;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+.danger-description {
+  margin: 0 0 6px;
+
+  color: #666;
+
+  font-size: 12px;
+}
+
+
+.danger-list {
+  margin: 8px 0 12px;
+  padding-left: 22px;
+
+  color: #666;
+
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+
+.danger-keep {
+  margin: 0 0 14px;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+
+.danger-button {
+  display: block;
+
+  width: 100%;
+
+  padding: 11px;
+
+  border: 1px solid #b8a0a0;
+  border-radius: 8px;
+
+  background: #fff;
+  color: #694747;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+
+.danger-button:hover {
+  background: #f7eeee;
 }
 
 

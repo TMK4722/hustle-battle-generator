@@ -7,7 +7,7 @@
 
   <title>Hustle Battle Generator</title>
 
-  <link rel="stylesheet" href="style.css?v=25">
+  <link rel="stylesheet" href="style.css?v=26">
 </head>
 
 <body>
@@ -157,7 +157,6 @@
       </div>
 
 
-      <!-- 自分の出場状況 -->
       <div
         id="roundPersonalStatus"
         class="round-personal-status hidden"
@@ -250,13 +249,48 @@
       </div>
 
 
-      <button
-        type="button"
-        id="resetRoundData"
-        class="reset-button"
-      >
-        Roundデータをリセット
-      </button>
+      <!-- 危険操作 -->
+      <details class="danger-details">
+
+        <summary>
+          危険操作
+        </summary>
+
+
+        <div class="danger-content">
+
+          <div class="danger-title">
+            Roundデータのリセット
+          </div>
+
+          <p class="danger-description">
+            以下のデータを削除します。
+          </p>
+
+          <ul class="danger-list">
+            <li>Round番号</li>
+            <li>Dance回数</li>
+            <li>Judge回数</li>
+            <li>Pair履歴</li>
+            <li>対戦履歴</li>
+          </ul>
+
+          <p class="danger-keep">
+            参加者の登録情報は残ります。
+          </p>
+
+
+          <button
+            type="button"
+            id="resetRoundData"
+            class="danger-button"
+          >
+            Roundデータをリセット
+          </button>
+
+        </div>
+
+      </details>
 
     </section>
 
@@ -439,7 +473,7 @@
 
 
   <!-- アプリ -->
-  <script src="script.js?v=25"></script>
+  <script src="script.js?v=26"></script>
 
 </body>
 
