@@ -80,105 +80,47 @@ const adminLogoutButton =
 ======================================== */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCDgc7y6_gOpdXcqiuakwaBpYZPC0euXlI",
-  authDomain: "hustle-battle-generator.firebaseapp.com",
-  projectId: "hustle-battle-generator",
-  storageBucket: "hustle-battle-generator.firebasestorage.app",
-  messagingSenderId: "985205666015",
-  appId: "1:985205666015:web:f17deffad37585696bb96a",
-  measurementId: "G-E8X2L86JX7"
+
+  apiKey:
+    "AIzaSyCDgc7y6_gOpdXcqiuakwaBpYZPC0euXlI",
+
+  authDomain:
+    "hustle-battle-generator.firebaseapp.com",
+
+  projectId:
+    "hustle-battle-generator",
+
+  storageBucket:
+    "hustle-battle-generator.firebasestorage.app",
+
+  messagingSenderId:
+    "985205666015",
+
+  appId:
+    "1:985205666015:web:f17deffad37585696bb96a",
+
+  measurementId:
+    "G-E8X2L86JX7"
+
 };
 
-let firebaseAuth = null;
-let firebaseReady = false;
+
+let firebaseAuth =
+  null;
+
+let firebaseDb =
+  null;
+
+let firebaseReady =
+  false;
+
+let isCurrentUserAdmin =
+  false;
 
 
-function updateFirebaseStatus(
-  statusText,
-  detailText = ""
-) {
-
-  if (firebaseStatus) {
-
-    firebaseStatus.textContent =
-      statusText;
-
-  }
-
-
-  if (firebaseUserInfo) {
-
-    firebaseUserInfo.textContent =
-      detailText;
-
-  }
-
-}
-
-
-function renderFirebaseUser(user) {
-
-  if (
-    user.isAnonymous
-  ) {
-
-    updateFirebaseStatus(
-      "接続OK",
-      "匿名認証済み / UID: " +
-      user.uid
-    );
-
-
-    if (adminLoginButton) {
-
-      adminLoginButton.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-    if (adminLogoutButton) {
-
-      adminLogoutButton.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-    return;
-
-  }
-
-
-  updateFirebaseStatus(
-    "管理者認証OK",
-    (user.email || "Googleアカウント") +
-    " / UID: " +
-    user.uid
-  );
-
-
-  if (adminLoginButton) {
-
-    adminLoginButton.classList.add(
-      "hidden"
-    );
-
-  }
-
-
-  if (adminLogoutButton) {
-
-    adminLogoutButton.classList.remove(
-      "hidden"
-    );
-
-  }
-
-}
-
+/* ========================================
+   Firebase初期化
+======================================== */
 
 function initializeFirebaseConnection() {
 
@@ -213,6 +155,10 @@ function initializeFirebaseConnection() {
 
     firebaseAuth =
       firebase.auth();
+
+
+    firebaseDb =
+      firebase.firestore();
 
 
     firebaseReady =
@@ -260,7 +206,7 @@ function initializeFirebaseConnection() {
         }
 
 
-        renderFirebaseUser(
+        await renderFirebaseUser(
           user
         );
 
@@ -286,6 +232,227 @@ function initializeFirebaseConnection() {
 }
 
 
+/* ========================================
+   Firebaseユーザー表示
+======================================== */
+
+async function renderFirebaseUser(
+  user
+) {
+
+  const isAnonymous =
+    user.isAnonymous ===
+    true;
+
+
+  if (
+    isAnonymous
+  ) {
+
+    isCurrentUserAdmin =
+      false;
+
+
+    updateFirebaseStatus(
+      "接続OK",
+      "匿名認証済み / UID: " +
+      user.uid
+    );
+
+
+    if (
+      adminLoginButton
+    ) {
+
+      adminLoginButton
+        .classList
+        .remove(
+          "hidden"
+        );
+
+    }
+
+
+    if (
+      adminLogoutButton
+    ) {
+
+      adminLogoutButton
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+
+
+    return;
+
+  }
+
+
+  const email =
+    user.email ||
+    "Googleアカウント";
+
+
+  updateFirebaseStatus(
+    "管理者確認中",
+    email +
+    " / UID: " +
+    user.uid
+  );
+
+
+  if (
+    adminLoginButton
+  ) {
+
+    adminLoginButton
+      .classList
+      .add(
+        "hidden"
+      );
+
+  }
+
+
+  if (
+    adminLogoutButton
+  ) {
+
+    adminLogoutButton
+      .classList
+      .remove(
+        "hidden"
+      );
+
+  }
+
+
+  try {
+
+    const adminDocument =
+      await firebaseDb
+        .collection(
+          "admins"
+        )
+        .doc(
+          user.uid
+        )
+        .get();
+
+
+    if (
+      adminDocument.exists &&
+      adminDocument.data() &&
+      adminDocument.data().role ===
+        "admin"
+    ) {
+
+      isCurrentUserAdmin =
+        true;
+
+
+      updateFirebaseStatus(
+        "管理者認証OK",
+        email +
+        " / UID: " +
+        user.uid
+      );
+
+
+      return;
+
+    }
+
+
+    isCurrentUserAdmin =
+      false;
+
+
+    updateFirebaseStatus(
+      "管理者権限なし",
+      email +
+      " は管理者として登録されていません。"
+    );
+
+  } catch (error) {
+
+    isCurrentUserAdmin =
+      false;
+
+
+    console.error(
+      "管理者権限の確認に失敗しました。",
+      error
+    );
+
+
+    if (
+      error.code ===
+      "permission-denied"
+    ) {
+
+      updateFirebaseStatus(
+        "管理者権限なし",
+        email +
+        " は管理者として登録されていないか、読み取り権限がありません。"
+      );
+
+    } else {
+
+      updateFirebaseStatus(
+        "管理者確認失敗",
+        "Firestoreで管理者情報を確認できませんでした：" +
+        (
+          error.code ||
+          error.message
+        )
+      );
+
+    }
+
+  }
+
+}
+
+
+/* ========================================
+   Firebase状態表示
+======================================== */
+
+function updateFirebaseStatus(
+  statusText,
+  detailText = ""
+) {
+
+  if (
+    firebaseStatus
+  ) {
+
+    firebaseStatus.textContent =
+      statusText;
+
+  }
+
+
+  if (
+    firebaseUserInfo
+  ) {
+
+    firebaseUserInfo.textContent =
+      detailText;
+
+  }
+
+}
+
+
+/* ========================================
+   管理者Googleログイン
+======================================== */
+
 async function loginAsAdmin() {
 
   if (
@@ -309,8 +476,10 @@ async function loginAsAdmin() {
 
   provider.setCustomParameters(
     {
+
       prompt:
         "select_account"
+
     }
   );
 
@@ -340,9 +509,13 @@ async function loginAsAdmin() {
 
         const fallbackCodes =
           [
+
             "auth/credential-already-in-use",
+
             "auth/email-already-in-use",
+
             "auth/provider-already-linked"
+
           ];
 
 
@@ -397,6 +570,10 @@ async function loginAsAdmin() {
 }
 
 
+/* ========================================
+   管理者モード終了
+======================================== */
+
 async function exitAdminMode() {
 
   if (
@@ -410,6 +587,10 @@ async function exitAdminMode() {
 
 
   try {
+
+    isCurrentUserAdmin =
+      false;
+
 
     await firebaseAuth
       .signOut();
@@ -441,19 +622,26 @@ const LEGACY_STORAGE_KEY =
    データ
 ======================================== */
 
-let participants = [];
+let participants =
+  [];
 
-let currentRound = 0;
+let currentRound =
+  0;
 
-let pairHistory = {};
+let pairHistory =
+  {};
 
-let leaderOpponentHistory = {};
+let leaderOpponentHistory =
+  {};
 
-let followerOpponentHistory = {};
+let followerOpponentHistory =
+  {};
 
-let lastRoundData = null;
+let lastRoundData =
+  null;
 
-let openParticipantMenuId = null;
+let openParticipantMenuId =
+  null;
 
 
 /* ========================================
@@ -497,7 +685,9 @@ resetRoundDataButton.addEventListener(
 );
 
 
-if (adminLoginButton) {
+if (
+  adminLoginButton
+) {
 
   adminLoginButton.addEventListener(
     "click",
@@ -507,7 +697,9 @@ if (adminLoginButton) {
 }
 
 
-if (adminLogoutButton) {
+if (
+  adminLogoutButton
+) {
 
   adminLogoutButton.addEventListener(
     "click",
@@ -562,6 +754,14 @@ function addParticipant() {
   }
 
 
+  const danceFairBaseline =
+    getCurrentDanceFairBaseline();
+
+
+  const judgeFairBaseline =
+    getCurrentJudgeFairBaseline();
+
+
   const participant =
     {
 
@@ -588,10 +788,10 @@ function addParticipant() {
         0,
 
       danceFairCount:
-        getCurrentDanceFairBaseline(),
+        danceFairBaseline,
 
       judgeFairCount:
-        getCurrentJudgeFairBaseline()
+        judgeFairBaseline
 
     };
 
@@ -778,7 +978,7 @@ function toggleParticipantMenu(id) {
 
 
 /* ========================================
-   現在のDance公平性基準
+   Dance公平性基準
 ======================================== */
 
 function getCurrentDanceFairBaseline(
@@ -838,7 +1038,7 @@ function getCurrentDanceFairBaseline(
 
 
 /* ========================================
-   現在のJudge公平性基準
+   Judge公平性基準
 ======================================== */
 
 function getCurrentJudgeFairBaseline(
@@ -1009,20 +1209,24 @@ function generateRound() {
           participant
         );
 
-      } else if (
-        Math.random() <
-        0.5
-      ) {
-
-        leaders.push(
-          participant
-        );
-
       } else {
 
-        followers.push(
-          participant
-        );
+        if (
+          Math.random() <
+          0.5
+        ) {
+
+          leaders.push(
+            participant
+          );
+
+        } else {
+
+          followers.push(
+            participant
+          );
+
+        }
 
       }
 
@@ -1324,17 +1528,16 @@ function createFairPairs(
 
 
       const index =
-        availableFollowers
-          .findIndex(
-            function (follower) {
+        availableFollowers.findIndex(
+          function (follower) {
 
-              return (
-                follower.id ===
-                selectedFollower.id
-              );
+            return (
+              follower.id ===
+              selectedFollower.id
+            );
 
-            }
-          );
+          }
+        );
 
 
       availableFollowers.splice(
@@ -1355,7 +1558,9 @@ function createFairPairs(
    Battle生成
 ======================================== */
 
-function createFairBattles(pairs) {
+function createFairBattles(
+  pairs
+) {
 
   const battles =
     [];
@@ -1385,9 +1590,7 @@ function createFairBattles(pairs) {
 
 
     availablePairs.forEach(
-      function (
-        candidatePair
-      ) {
+      function (candidatePair) {
 
         const score =
           getBattleOpponentScore(
@@ -1475,17 +1678,25 @@ function getBattleOpponentScore(
   pairB
 ) {
 
-  return (
+  const leaderScore =
     getOpponentHistoryCount(
       leaderOpponentHistory,
       pairA.leader,
       pairB.leader
-    ) +
+    );
+
+
+  const followerScore =
     getOpponentHistoryCount(
       followerOpponentHistory,
       pairA.follower,
       pairB.follower
-    )
+    );
+
+
+  return (
+    leaderScore +
+    followerScore
   );
 
 }
@@ -1570,12 +1781,13 @@ function selectJudgesForBattle(
 
 
       if (
-        bestScore === null ||
+        bestScore ===
+          null ||
         compareJudgeScores(
           score,
           bestScore
         ) <
-        0
+          0
       ) {
 
         bestScore =
@@ -1811,7 +2023,7 @@ function createCombinations(
         startIndex;
 
       i <
-        array.length;
+      array.length;
 
       i++
     ) {
@@ -1894,37 +2106,8 @@ function getJudgeFairCount(
 
 
 /* ========================================
-   履歴
+   Pair履歴
 ======================================== */
-
-function getHistoryKey(
-  participantA,
-  participantB
-) {
-
-  const ids =
-    [
-      String(
-        participantA.id
-      ),
-
-      String(
-        participantB.id
-      )
-    ];
-
-
-  ids.sort();
-
-
-  return (
-    ids[0] +
-    "|" +
-    ids[1]
-  );
-
-}
-
 
 function getPairKey(
   participantA,
@@ -1961,7 +2144,9 @@ function getPairHistoryCount(
   }
 
 
-  return pairHistory[key].count;
+  return (
+    pairHistory[key].count
+  );
 
 }
 
@@ -2005,6 +2190,10 @@ function addPairHistory(
 
 }
 
+
+/* ========================================
+   対戦履歴
+======================================== */
 
 function addOpponentHistory(
   historyObject,
@@ -2070,13 +2259,50 @@ function getOpponentHistoryCount(
   }
 
 
-  return historyObject[key].count;
+  return (
+    historyObject[key].count
+  );
 
 }
 
 
 /* ========================================
-   localStorage
+   共通履歴キー
+======================================== */
+
+function getHistoryKey(
+  participantA,
+  participantB
+) {
+
+  const ids =
+    [
+
+      String(
+        participantA.id
+      ),
+
+      String(
+        participantB.id
+      )
+
+    ];
+
+
+  ids.sort();
+
+
+  return (
+    ids[0] +
+    "|" +
+    ids[1]
+  );
+
+}
+
+
+/* ========================================
+   自動保存
 ======================================== */
 
 function saveState() {
@@ -2125,6 +2351,10 @@ function saveState() {
 
 }
 
+
+/* ========================================
+   保存データ読込
+======================================== */
 
 function loadState() {
 
@@ -2278,7 +2508,7 @@ function loadState() {
 
 
 /* ========================================
-   Round保存・復元
+   Round保存用データ
 ======================================== */
 
 function serializeRound(
@@ -2302,12 +2532,10 @@ function serializeRound(
               {
 
                 leaderId:
-                  battle.pairA
-                    .leader.id,
+                  battle.pairA.leader.id,
 
                 followerId:
-                  battle.pairA
-                    .follower.id
+                  battle.pairA.follower.id
 
               },
 
@@ -2315,12 +2543,10 @@ function serializeRound(
               {
 
                 leaderId:
-                  battle.pairB
-                    .leader.id,
+                  battle.pairB.leader.id,
 
                 followerId:
-                  battle.pairB
-                    .follower.id
+                  battle.pairB.follower.id
 
               },
 
@@ -2352,6 +2578,10 @@ function serializeRound(
 }
 
 
+/* ========================================
+   保存Round復元
+======================================== */
+
 function restoreLastRound() {
 
   if (
@@ -2372,33 +2602,25 @@ function restoreLastRound() {
 
       const pairALeader =
         findParticipantById(
-          storedBattle
-            .pairA
-            .leaderId
+          storedBattle.pairA.leaderId
         );
 
 
       const pairAFollower =
         findParticipantById(
-          storedBattle
-            .pairA
-            .followerId
+          storedBattle.pairA.followerId
         );
 
 
       const pairBLeader =
         findParticipantById(
-          storedBattle
-            .pairB
-            .leaderId
+          storedBattle.pairB.leaderId
         );
 
 
       const pairBFollower =
         findParticipantById(
-          storedBattle
-            .pairB
-            .followerId
+          storedBattle.pairB.followerId
         );
 
 
@@ -2415,8 +2637,7 @@ function restoreLastRound() {
 
 
       const judges =
-        storedBattle
-          .judgeIds
+        storedBattle.judgeIds
           .map(
             function (id) {
 
@@ -2471,8 +2692,7 @@ function restoreLastRound() {
 
 
   const waitingParticipants =
-    lastRoundData
-      .waitingIds
+    lastRoundData.waitingIds
       .map(
         function (id) {
 
@@ -2506,6 +2726,10 @@ function restoreLastRound() {
 
 }
 
+
+/* ========================================
+   Roundデータリセット
+======================================== */
 
 function resetRoundData() {
 
@@ -2615,7 +2839,7 @@ function renderAll() {
 
 
 /* ========================================
-   参加者一覧
+   参加者一覧表示
 ======================================== */
 
 function renderParticipantList() {
@@ -2909,16 +3133,6 @@ function renderParticipantList() {
           "participant-action-button";
 
 
-        const note =
-          document.createElement(
-            "div"
-          );
-
-
-        note.className =
-          "participant-action-note";
-
-
         if (
           participant.active ===
           false
@@ -2939,10 +3153,6 @@ function renderParticipantList() {
             }
           );
 
-
-          note.textContent =
-            "復帰するとBattle・Judgeの対象に戻ります。";
-
         } else {
 
           actionButton.textContent =
@@ -2960,6 +3170,28 @@ function renderParticipantList() {
             }
           );
 
+        }
+
+
+        const note =
+          document.createElement(
+            "div"
+          );
+
+
+        note.className =
+          "participant-action-note";
+
+
+        if (
+          participant.active ===
+          false
+        ) {
+
+          note.textContent =
+            "復帰するとBattle・Judgeの対象に戻ります。";
+
+        } else {
 
           note.textContent =
             "休憩中はBattle・Judgeの対象外になります。";
@@ -3564,8 +3796,10 @@ function getParticipantsUsedAsRole(
   return participants.filter(
     function (participant) {
 
-      return ids.has(
-        participant.id
+      return (
+        ids.has(
+          participant.id
+        )
       );
 
     }
@@ -3637,7 +3871,9 @@ function sortByDanceCount(
   return decorated.map(
     function (item) {
 
-      return item.participant;
+      return (
+        item.participant
+      );
 
     }
   );
@@ -3664,7 +3900,7 @@ function shuffleArray(
       copied.length - 1;
 
     i >
-      0;
+    0;
 
     i--
   ) {
@@ -3699,12 +3935,14 @@ function getRandomItem(
   array
 ) {
 
-  return array[
-    Math.floor(
-      Math.random() *
-      array.length
-    )
-  ];
+  return (
+    array[
+      Math.floor(
+        Math.random() *
+        array.length
+      )
+    ]
+  );
 
 }
 

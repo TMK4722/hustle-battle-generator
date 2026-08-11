@@ -32,13 +32,17 @@
 
         <h2>Firebase接続</h2>
 
-        <span id="firebaseStatus">確認中</span>
+        <span id="firebaseStatus">
+          確認中
+        </span>
 
       </div>
+
 
       <p class="section-description">
         現在は接続確認用です。参加者データはまだこのブラウザ内に保存されます。
       </p>
+
 
       <button
         type="button"
@@ -48,6 +52,7 @@
         管理者としてGoogleログイン
       </button>
 
+
       <button
         type="button"
         id="adminLogoutButton"
@@ -56,7 +61,11 @@
         管理者モードを終了
       </button>
 
-      <div id="firebaseUserInfo" class="save-note">
+
+      <div
+        id="firebaseUserInfo"
+        class="save-note"
+      >
         Firebaseへ接続しています。
       </div>
 
@@ -68,7 +77,10 @@
 
       <h2>参加者登録</h2>
 
-      <label class="field-label" for="name">
+      <label
+        class="field-label"
+        for="name"
+      >
         名前
       </label>
 
@@ -87,17 +99,29 @@
       <div class="role-selector">
 
         <label>
-          <input type="radio" name="role" value="leader">
+          <input
+            type="radio"
+            name="role"
+            value="leader"
+          >
           Leader
         </label>
 
         <label>
-          <input type="radio" name="role" value="follower">
+          <input
+            type="radio"
+            name="role"
+            value="follower"
+          >
           Follower
         </label>
 
         <label>
-          <input type="radio" name="role" value="both">
+          <input
+            type="radio"
+            name="role"
+            value="both"
+          >
           Both
         </label>
 
@@ -110,14 +134,24 @@
 
       <label class="judge-selector">
 
-        <input type="checkbox" id="judgeAvailable" checked>
+        <input
+          type="checkbox"
+          id="judgeAvailable"
+          checked
+        >
 
-        <span>Judge可能</span>
+        <span>
+          Judge可能
+        </span>
 
       </label>
 
 
-      <button type="button" id="addParticipant" class="add-button">
+      <button
+        type="button"
+        id="addParticipant"
+        class="add-button"
+      >
         参加者を追加
       </button>
 
@@ -131,13 +165,20 @@
 
         <h2>参加者一覧</h2>
 
-        <span id="participantCount">0人</span>
+        <span id="participantCount">
+          0人
+        </span>
 
       </div>
 
-      <div id="emptyMessage" class="empty-message">
+
+      <div
+        id="emptyMessage"
+        class="empty-message"
+      >
         参加者はまだ登録されていません。
       </div>
+
 
       <div id="participantList"></div>
 
@@ -153,15 +194,26 @@
         出場回数・Pair履歴・対戦履歴・Judge回数を考慮して生成します。
       </p>
 
-      <button type="button" id="generateRound" class="generate-button">
+
+      <button
+        type="button"
+        id="generateRound"
+        class="generate-button"
+      >
         Generate Round
       </button>
+
 
       <div class="save-note">
         状態はこのブラウザに自動保存されます。
       </div>
 
-      <button type="button" id="resetRoundData" class="reset-button">
+
+      <button
+        type="button"
+        id="resetRoundData"
+        class="reset-button"
+      >
         Roundデータをリセット
       </button>
 
@@ -169,19 +221,29 @@
 
 
     <!-- Round結果 -->
-    <section id="roundResultCard" class="card hidden">
+    <section
+      id="roundResultCard"
+      class="card hidden"
+    >
 
       <div class="round-header">
 
-        <h2 id="roundTitle">Round 1</h2>
+        <h2 id="roundTitle">
+          Round 1
+        </h2>
 
         <span id="battleCount"></span>
 
       </div>
 
+
       <div id="battleList"></div>
 
-      <div id="waitingArea" class="waiting-area hidden">
+
+      <div
+        id="waitingArea"
+        class="waiting-area hidden"
+      >
 
         <h3>今回未出場</h3>
 
@@ -197,11 +259,16 @@
 
       <summary class="history-summary">
 
-        <span>Pair履歴</span>
+        <span>
+          Pair履歴
+        </span>
 
-        <span class="history-summary-note">確認用</span>
+        <span class="history-summary-note">
+          確認用
+        </span>
 
       </summary>
+
 
       <div class="history-content">
 
@@ -209,9 +276,14 @@
           過去に組んだペアと回数を確認できます。
         </p>
 
-        <div id="pairHistoryEmpty" class="empty-message">
+
+        <div
+          id="pairHistoryEmpty"
+          class="empty-message"
+        >
           Pair履歴はまだありません。
         </div>
+
 
         <div id="pairHistoryList"></div>
 
@@ -225,11 +297,16 @@
 
       <summary class="history-summary">
 
-        <span>最多対戦相手</span>
+        <span>
+          最多対戦相手
+        </span>
 
-        <span class="history-summary-note">確認用</span>
+        <span class="history-summary-note">
+          確認用
+        </span>
 
       </summary>
+
 
       <div class="history-content">
 
@@ -237,25 +314,37 @@
           同じRoleで最も多く対戦している相手を表示します。
         </p>
 
+
         <div class="opponent-section">
 
           <h3>Leader</h3>
 
-          <div id="leaderOpponentEmpty" class="empty-message">
+
+          <div
+            id="leaderOpponentEmpty"
+            class="empty-message"
+          >
             Leaderの対戦履歴はまだありません。
           </div>
+
 
           <div id="leaderOpponentList"></div>
 
         </div>
 
+
         <div class="opponent-section">
 
           <h3>Follower</h3>
 
-          <div id="followerOpponentEmpty" class="empty-message">
+
+          <div
+            id="followerOpponentEmpty"
+            class="empty-message"
+          >
             Followerの対戦履歴はまだありません。
           </div>
+
 
           <div id="followerOpponentList"></div>
 
@@ -269,11 +358,21 @@
 
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+  <script
+    src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"
+  ></script>
+
+  <script
+    src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"
+  ></script>
+
+  <script
+    src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"
+  ></script>
+
 
   <!-- アプリ本体 -->
-  <script src="script.js?v=19"></script>
+  <script src="script.js?v=20"></script>
 
 </body>
 
