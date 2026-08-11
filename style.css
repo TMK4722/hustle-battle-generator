@@ -153,15 +153,6 @@ body {
   cursor: default;
 }
 
-.save-note {
-  margin-top: 10px;
-  color: #888;
-  font-size: 11px;
-  line-height: 1.5;
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-
 .reset-button {
   display: block;
   margin: 12px auto 0;
@@ -174,14 +165,14 @@ body {
   cursor: pointer;
 }
 
-.reset-button:hover {
-  color: #222;
+.save-note {
+  margin-top: 10px;
+  color: #888;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
-
-
-/* ========================================
-   説明
-======================================== */
 
 .section-description {
   margin: 10px 0 18px;
@@ -192,7 +183,7 @@ body {
 
 
 /* ========================================
-   参加者一覧
+   一覧
 ======================================== */
 
 .list-header {
@@ -231,17 +222,14 @@ body {
 
 .participant-row {
   display: grid;
-
   grid-template-columns:
     minmax(0, 1fr)
     76px
     66px
     28px
     34px;
-
   align-items: center;
   gap: 6px;
-
   min-height: 54px;
   padding: 8px 4px;
 }
@@ -323,19 +311,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 32px;
   height: 32px;
-
   margin: 0;
   padding: 0;
-
   border: 0;
   border-radius: 50%;
-
   background: #eee;
   color: #555;
-
   font-size: 20px;
   cursor: pointer;
 }
@@ -357,21 +340,13 @@ body {
 .participant-action-button {
   width: 100%;
   padding: 9px 12px;
-
   border: 1px solid #ddd;
   border-radius: 8px;
-
   background: #fafafa;
   color: #444;
-
   font-size: 13px;
   font-weight: bold;
-
   cursor: pointer;
-}
-
-.participant-action-button:hover {
-  background: #f0f0f0;
 }
 
 .participant-action-note {
@@ -398,22 +373,12 @@ body {
   font-size: 14px;
 }
 
-
-/* ========================================
-   Battle
-======================================== */
-
 .battle-card {
   margin-bottom: 18px;
   padding: 16px;
-
   background: #f7f7f8;
   border: 1px solid #e6e6e6;
   border-radius: 12px;
-}
-
-.battle-card:last-child {
-  margin-bottom: 0;
 }
 
 .battle-title {
@@ -441,10 +406,6 @@ body {
   gap: 8px;
   margin-bottom: 6px;
   font-size: 14px;
-}
-
-.pair-person:last-child {
-  margin-bottom: 0;
 }
 
 .person-role {
@@ -492,12 +453,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-
   padding: 6px 9px;
-
   background: #fff;
   border-radius: 20px;
-
   font-size: 13px;
   font-weight: 600;
 }
@@ -544,7 +502,7 @@ body {
 
 
 /* ========================================
-   折りたたみ履歴
+   履歴
 ======================================== */
 
 .history-details {
@@ -556,12 +514,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 18px 20px;
-
   font-size: 18px;
   font-weight: bold;
-
   cursor: pointer;
   list-style: none;
 }
@@ -585,15 +540,11 @@ body {
 .history-summary-note {
   margin-left: auto;
   margin-right: 10px;
-
   padding: 4px 8px;
-
   background: #eee;
   border-radius: 20px;
-
   color: #666;
   font-size: 11px;
-  font-weight: bold;
 }
 
 .history-content {
@@ -601,28 +552,15 @@ body {
   border-top: 1px solid #eee;
 }
 
-
-/* ========================================
-   Pair履歴
-======================================== */
-
 .history-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 12px;
-
   padding: 10px 4px;
-
   border-bottom: 1px solid #eee;
 }
 
-.history-row:last-child {
-  border-bottom: none;
-}
-
 .history-names {
-  min-width: 0;
   font-size: 14px;
   font-weight: 600;
 }
@@ -636,7 +574,7 @@ body {
 
 
 /* ========================================
-   最多対戦相手
+   対戦
 ======================================== */
 
 .opponent-section {
@@ -655,27 +593,17 @@ body {
 
 .opponent-row {
   display: grid;
-
   grid-template-columns:
     minmax(70px, 1fr)
     24px
     minmax(0, 2fr)
     48px;
-
-  align-items: center;
   gap: 6px;
-
   padding: 9px 4px;
-
   border-bottom: 1px solid #eee;
 }
 
-.opponent-row:last-child {
-  border-bottom: none;
-}
-
 .opponent-name {
-  min-width: 0;
   font-size: 14px;
   font-weight: 600;
 }
@@ -686,8 +614,6 @@ body {
 }
 
 .opponent-targets {
-  min-width: 0;
-  color: #333;
   font-size: 14px;
   overflow-wrap: anywhere;
 }
@@ -697,7 +623,6 @@ body {
   font-size: 12px;
   font-weight: bold;
   text-align: right;
-  white-space: nowrap;
 }
 
 
@@ -723,15 +648,6 @@ body {
     padding: 0;
   }
 
-  .history-summary {
-    padding: 16px 18px;
-    font-size: 17px;
-  }
-
-  .history-content {
-    padding: 0 18px 18px;
-  }
-
   .participant-row {
     grid-template-columns:
       minmax(0, 1fr)
@@ -739,7 +655,6 @@ body {
       58px
       24px
       30px;
-
     gap: 4px;
   }
 
@@ -764,7 +679,6 @@ body {
       20px
       minmax(0, 2fr)
       42px;
-
     gap: 4px;
   }
 }

@@ -7,7 +7,7 @@
 
   <title>Hustle Battle Generator</title>
 
-  <link rel="stylesheet" href="style.css?v=21">
+  <link rel="stylesheet" href="style.css?v=23">
 </head>
 
 <body>
@@ -15,34 +15,25 @@
   <main class="container">
 
     <header class="app-header">
-
       <h1>Hustle Battle Generator</h1>
 
       <p>
         参加者を登録して、バトルの組み合わせを作成します。
       </p>
-
     </header>
 
 
-    <!-- Firebase接続 -->
+    <!-- Firebase -->
     <section class="card">
 
       <div class="list-header">
-
         <h2>Firebase接続</h2>
-
-        <span id="firebaseStatus">
-          確認中
-        </span>
-
+        <span id="firebaseStatus">確認中</span>
       </div>
 
-
       <p class="section-description">
-        参加者情報はFirebaseを通じて共有されます。
+        参加者情報・Round情報はFirebaseを通じて共有されます。
       </p>
-
 
       <button
         type="button"
@@ -52,7 +43,6 @@
         管理者としてGoogleログイン
       </button>
 
-
       <button
         type="button"
         id="adminLogoutButton"
@@ -60,7 +50,6 @@
       >
         管理者モードを終了
       </button>
-
 
       <div
         id="firebaseUserInfo"
@@ -72,15 +61,20 @@
     </section>
 
 
-    <!-- 自分の参加登録 -->
+    <!-- 参加登録 / 管理者参加者追加 -->
     <section
       id="registrationCard"
       class="card"
     >
 
-      <h2>参加登録</h2>
+      <h2 id="registrationTitle">
+        参加登録
+      </h2>
 
-      <p class="section-description">
+      <p
+        id="registrationDescription"
+        class="section-description"
+      >
         この端末を使用する参加者を登録します。
       </p>
 
@@ -91,7 +85,6 @@
       >
         名前
       </label>
-
 
       <input
         type="text"
@@ -105,7 +98,6 @@
         Role
       </p>
 
-
       <div class="role-selector">
 
         <label>
@@ -117,7 +109,6 @@
           Leader
         </label>
 
-
         <label>
           <input
             type="radio"
@@ -126,7 +117,6 @@
           >
           Follower
         </label>
-
 
         <label>
           <input
@@ -143,7 +133,6 @@
       <p class="field-label">
         Judge
       </p>
-
 
       <label class="judge-selector">
 
@@ -172,21 +161,12 @@
 
 
     <!-- 参加者一覧 -->
-    <section
-      id="participantListCard"
-      class="card"
-    >
+    <section class="card">
 
       <div class="list-header">
-
         <h2>参加者一覧</h2>
-
-        <span id="participantCount">
-          0人
-        </span>
-
+        <span id="participantCount">0人</span>
       </div>
-
 
       <div
         id="emptyMessage"
@@ -195,13 +175,12 @@
         参加者はまだ登録されていません。
       </div>
 
-
       <div id="participantList"></div>
 
     </section>
 
 
-    <!-- 管理者：Round生成 -->
+    <!-- 管理者：Round -->
     <section
       id="roundControlCard"
       class="card hidden"
@@ -213,7 +192,6 @@
         出場回数・Pair履歴・対戦履歴・Judge回数を考慮して生成します。
       </p>
 
-
       <button
         type="button"
         id="generateRound"
@@ -222,11 +200,9 @@
         Generate Round
       </button>
 
-
       <div class="save-note">
-        Round・D/J回数・履歴は現在この管理者ブラウザに保存されます。
+        Round・D/J回数・履歴もFirebaseへ保存されます。
       </div>
-
 
       <button
         type="button"
@@ -239,7 +215,7 @@
     </section>
 
 
-    <!-- 管理者：Round結果 -->
+    <!-- Round結果 -->
     <section
       id="roundResultCard"
       class="card hidden"
@@ -255,18 +231,14 @@
 
       </div>
 
-
       <div id="battleList"></div>
-
 
       <div
         id="waitingArea"
         class="waiting-area hidden"
       >
 
-        <h3>
-          今回未出場
-        </h3>
+        <h3>今回未出場</h3>
 
         <div id="waitingList"></div>
 
@@ -275,7 +247,7 @@
     </section>
 
 
-    <!-- 管理者：Pair履歴 -->
+    <!-- Pair履歴 -->
     <details
       id="pairHistoryDetails"
       class="card history-details hidden"
@@ -283,9 +255,7 @@
 
       <summary class="history-summary">
 
-        <span>
-          Pair履歴
-        </span>
+        <span>Pair履歴</span>
 
         <span class="history-summary-note">
           確認用
@@ -293,13 +263,11 @@
 
       </summary>
 
-
       <div class="history-content">
 
         <p class="section-description">
           過去に組んだペアと回数を確認できます。
         </p>
-
 
         <div
           id="pairHistoryEmpty"
@@ -308,7 +276,6 @@
           Pair履歴はまだありません。
         </div>
 
-
         <div id="pairHistoryList"></div>
 
       </div>
@@ -316,7 +283,7 @@
     </details>
 
 
-    <!-- 管理者：最多対戦相手 -->
+    <!-- 対戦履歴 -->
     <details
       id="opponentHistoryDetails"
       class="card history-details hidden"
@@ -324,16 +291,13 @@
 
       <summary class="history-summary">
 
-        <span>
-          最多対戦相手
-        </span>
+        <span>最多対戦相手</span>
 
         <span class="history-summary-note">
           確認用
         </span>
 
       </summary>
-
 
       <div class="history-content">
 
@@ -344,10 +308,7 @@
 
         <div class="opponent-section">
 
-          <h3>
-            Leader
-          </h3>
-
+          <h3>Leader</h3>
 
           <div
             id="leaderOpponentEmpty"
@@ -356,7 +317,6 @@
             Leaderの対戦履歴はまだありません。
           </div>
 
-
           <div id="leaderOpponentList"></div>
 
         </div>
@@ -364,10 +324,7 @@
 
         <div class="opponent-section">
 
-          <h3>
-            Follower
-          </h3>
-
+          <h3>Follower</h3>
 
           <div
             id="followerOpponentEmpty"
@@ -375,7 +332,6 @@
           >
             Followerの対戦履歴はまだありません。
           </div>
-
 
           <div id="followerOpponentList"></div>
 
@@ -388,16 +344,11 @@
   </main>
 
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"></script>
 
-
-  <!-- アプリ本体 -->
-  <script src="script.js?v=21"></script>
+  <script src="script.js?v=23"></script>
 
 </body>
 
