@@ -39,7 +39,7 @@ body {
 
 
 /* ========================================
-   カード
+   共通カード
 ======================================== */
 
 .card {
@@ -53,6 +53,10 @@ body {
 .card h2 {
   margin: 0;
   font-size: 20px;
+}
+
+.hidden {
+  display: none !important;
 }
 
 
@@ -143,11 +147,19 @@ body {
   background: #444;
 }
 
+.add-button:disabled,
+.generate-button:disabled {
+  background: #aaa;
+  cursor: default;
+}
+
 .save-note {
   margin-top: 10px;
   color: #888;
   font-size: 11px;
+  line-height: 1.5;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .reset-button {
@@ -168,6 +180,18 @@ body {
 
 
 /* ========================================
+   説明
+======================================== */
+
+.section-description {
+  margin: 10px 0 18px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* ========================================
    参加者一覧
 ======================================== */
 
@@ -175,10 +199,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
-#participantCount {
+#participantCount,
+#firebaseStatus {
   color: #777;
   font-size: 14px;
 }
@@ -218,7 +244,9 @@ body {
 
   min-height: 54px;
   padding: 8px 4px;
+}
 
+.participant-row.can-manage {
   cursor: pointer;
 }
 
@@ -230,6 +258,13 @@ body {
   min-width: 0;
 }
 
+.participant-name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
 .participant-name {
   min-width: 0;
   font-size: 16px;
@@ -237,6 +272,16 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.participant-self-badge {
+  flex-shrink: 0;
+  padding: 2px 5px;
+  border-radius: 20px;
+  background: #222;
+  color: #fff;
+  font-size: 9px;
+  font-weight: bold;
 }
 
 .participant-rest-status {
@@ -295,9 +340,14 @@ body {
   cursor: pointer;
 }
 
+.delete-placeholder {
+  width: 32px;
+  height: 32px;
+}
+
 
 /* ========================================
-   参加者操作
+   休憩・復帰
 ======================================== */
 
 .participant-action-panel {
@@ -307,12 +357,16 @@ body {
 .participant-action-button {
   width: 100%;
   padding: 9px 12px;
+
   border: 1px solid #ddd;
   border-radius: 8px;
+
   background: #fafafa;
   color: #444;
+
   font-size: 13px;
   font-weight: bold;
+
   cursor: pointer;
 }
 
@@ -329,24 +383,8 @@ body {
 
 
 /* ========================================
-   説明
+   Round
 ======================================== */
-
-.section-description {
-  margin: 10px 0 18px;
-  color: #666;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-
-/* ========================================
-   Round結果
-======================================== */
-
-.hidden {
-  display: none;
-}
 
 .round-header {
   display: flex;
@@ -368,6 +406,7 @@ body {
 .battle-card {
   margin-bottom: 18px;
   padding: 16px;
+
   background: #f7f7f8;
   border: 1px solid #e6e6e6;
   border-radius: 12px;
@@ -453,9 +492,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+
   padding: 6px 9px;
+
   background: #fff;
   border-radius: 20px;
+
   font-size: 13px;
   font-weight: 600;
 }
@@ -561,7 +603,7 @@ body {
 
 
 /* ========================================
-   履歴
+   Pair履歴
 ======================================== */
 
 .history-row {
@@ -702,15 +744,16 @@ body {
   }
 
   .participant-role {
+    padding: 5px;
     font-size: 11px;
-    padding: 5px 5px;
   }
 
   .participant-count {
     font-size: 10px;
   }
 
-  .delete-button {
+  .delete-button,
+  .delete-placeholder {
     width: 30px;
     height: 30px;
   }
