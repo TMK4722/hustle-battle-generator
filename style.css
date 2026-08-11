@@ -11,6 +11,7 @@ body {
   margin: 0;
   background: #f4f5f7;
   color: #222;
+
   font-family:
     Arial,
     "Noto Sans JP",
@@ -19,15 +20,91 @@ body {
 
 
 .container {
+  display: flex;
+  flex-direction: column;
+
   width: 100%;
   max-width: 600px;
+
   margin: 0 auto;
+
   padding: 24px 16px 48px;
 }
 
 
 .hidden {
   display: none !important;
+}
+
+
+/* ========================================
+   表示順
+   一般参加者：Roundを先に
+======================================== */
+
+.app-header {
+  order: 1;
+}
+
+.registration-card {
+  order: 2;
+}
+
+.round-result-card {
+  order: 3;
+}
+
+.participant-list-card {
+  order: 4;
+}
+
+.admin-card {
+  order: 5;
+}
+
+#pairHistoryDetails {
+  order: 6;
+}
+
+#opponentHistoryDetails {
+  order: 7;
+}
+
+.system-details {
+  order: 8;
+}
+
+
+/* ========================================
+   管理者では参加者管理を優先
+======================================== */
+
+body.admin-mode .registration-card {
+  order: 2;
+}
+
+body.admin-mode .participant-list-card {
+  order: 3;
+}
+
+body.admin-mode .admin-card {
+  order: 4;
+}
+
+body.admin-mode .round-result-card {
+  order: 5;
+}
+
+body.admin-mode #pairHistoryDetails {
+  order: 6;
+}
+
+body.admin-mode #opponentHistoryDetails {
+  order: 7;
+}
+
+body.admin-mode .system-details {
+  order: 8;
 }
 
 
@@ -42,6 +119,7 @@ body {
 
 .app-header h1 {
   margin: 0;
+
   font-size: 27px;
   line-height: 1.2;
 }
@@ -49,8 +127,11 @@ body {
 
 .app-header p {
   margin: 6px 0 0;
+
   color: #888;
+
   font-size: 13px;
+
   letter-spacing: 0.03em;
 }
 
@@ -61,6 +142,7 @@ body {
 
 .card {
   margin-bottom: 16px;
+
   padding: 20px;
 
   background: #fff;
@@ -75,6 +157,7 @@ body {
 
 .card h2 {
   margin: 0;
+
   font-size: 20px;
 }
 
@@ -206,6 +289,7 @@ body {
 .add-button:disabled,
 .generate-button:disabled {
   background: #aaa;
+
   cursor: default;
 }
 
@@ -493,7 +577,6 @@ body {
   border-radius: 8px;
 
   background: #fafafa;
-
   color: #444;
 
   font-size: 13px;
@@ -519,8 +602,7 @@ body {
 ======================================== */
 
 .round-result-card {
-  border:
-    1px solid #e2e2e2;
+  border: 1px solid #e0e0e0;
 }
 
 
@@ -544,7 +626,7 @@ body {
 
   gap: 12px;
 
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 
@@ -558,19 +640,40 @@ body {
 
 
 /* ========================================
+   自分のRound状況
+======================================== */
+
+.round-personal-status {
+  margin-bottom: 16px;
+
+  padding: 11px 13px;
+
+  background: #222;
+  color: #fff;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  line-height: 1.5;
+}
+
+
+/* ========================================
    Battle
 ======================================== */
 
 .battle-card {
+  position: relative;
+
   margin-bottom: 18px;
 
   padding: 15px;
 
   background: #f7f7f8;
 
-  border:
-    1px solid #e6e6e6;
-
+  border: 1px solid #e6e6e6;
   border-radius: 12px;
 }
 
@@ -580,11 +683,42 @@ body {
 }
 
 
-.battle-title {
-  margin-bottom: 12px;
+/* 自分が関係するBattle */
+.battle-card.my-battle {
+  border: 2px solid #222;
+}
 
+
+.battle-title-row {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+}
+
+
+.battle-title {
   font-size: 15px;
   font-weight: bold;
+}
+
+
+.my-battle-badge {
+  padding: 4px 8px;
+
+  background: #222;
+  color: #fff;
+
+  border-radius: 20px;
+
+  font-size: 9px;
+  font-weight: bold;
+
+  white-space: nowrap;
 }
 
 
@@ -618,12 +752,28 @@ body {
 
   margin-bottom: 6px;
 
+  padding: 3px 5px;
+
   font-size: 14px;
+
+  border-radius: 6px;
 }
 
 
 .pair-person:last-child {
   margin-bottom: 0;
+}
+
+
+/* 自分の名前 */
+.pair-person.my-assignment {
+  background: #222;
+  color: #fff;
+}
+
+
+.pair-person.my-assignment .person-role {
+  color: #ddd;
 }
 
 
@@ -701,6 +851,18 @@ body {
 }
 
 
+/* 自分がJudge */
+.judge-person.my-judge {
+  background: #222;
+  color: #fff;
+}
+
+
+.judge-person.my-judge .judge-role {
+  color: #ddd;
+}
+
+
 .judge-role {
   color: #888;
 
@@ -725,8 +887,7 @@ body {
 
   padding-top: 18px;
 
-  border-top:
-    1px solid #e4e4e4;
+  border-top: 1px solid #e4e4e4;
 }
 
 
@@ -757,13 +918,20 @@ body {
 }
 
 
+.waiting-person.my-waiting {
+  background: #222;
+  color: #fff;
+
+  font-weight: bold;
+}
+
+
 /* ========================================
    管理者
 ======================================== */
 
 .admin-card {
-  border:
-    1px solid #dedede;
+  border: 1px solid #dedede;
 }
 
 
@@ -850,8 +1018,7 @@ body {
 .history-content {
   padding: 0 20px 20px;
 
-  border-top:
-    1px solid #eee;
+  border-top: 1px solid #eee;
 }
 
 
@@ -865,8 +1032,7 @@ body {
 
   padding: 10px 4px;
 
-  border-bottom:
-    1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 
@@ -901,8 +1067,7 @@ body {
 .opponent-section {
   padding-top: 20px;
 
-  border-top:
-    1px solid #eee;
+  border-top: 1px solid #eee;
 }
 
 
@@ -928,8 +1093,7 @@ body {
 
   padding: 9px 4px;
 
-  border-bottom:
-    1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 
@@ -1123,6 +1287,13 @@ body {
 
   .pair-box {
     padding: 11px;
+  }
+
+
+  .round-personal-status {
+    padding: 10px 12px;
+
+    font-size: 12px;
   }
 
 
