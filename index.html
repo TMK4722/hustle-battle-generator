@@ -1,1138 +1,446 @@
-* {
-  box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Hustle Battle Generator</title>
 
+  <link rel="stylesheet" href="style.css?v=25">
+</head>
+
+<body>
+
+  <main class="container">
+
+    <!-- =====================================
+         ヘッダー
+    ====================================== -->
+    <header class="app-header">
 
-/* ========================================
-   基本
-======================================== */
+      <h1>Hustle Battle Generator</h1>
 
-body {
-  margin: 0;
-  background: #f4f5f7;
-  color: #222;
-  font-family:
-    Arial,
-    "Noto Sans JP",
-    sans-serif;
-}
+      <p>
+        Hustle Practice Battle
+      </p>
+
+    </header>
 
+
+    <!-- =====================================
+         参加登録 / 管理者参加者追加
+    ====================================== -->
+    <section
+      id="registrationCard"
+      class="card registration-card"
+    >
+
+      <h2 id="registrationTitle">
+        参加登録
+      </h2>
 
-.container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
-}
+      <p
+        id="registrationDescription"
+        class="section-description"
+      >
+        この端末を使用する参加者を登録します。
+      </p>
 
 
-.hidden {
-  display: none !important;
-}
+      <label
+        class="field-label"
+        for="name"
+      >
+        名前
+      </label>
 
+      <input
+        type="text"
+        id="name"
+        class="name-input"
+        placeholder="例：Tamaki"
+      >
 
-/* ========================================
-   ヘッダー
-======================================== */
 
-.app-header {
-  margin-bottom: 22px;
-}
+      <p class="field-label">
+        Role
+      </p>
 
+      <div class="role-selector">
 
-.app-header h1 {
-  margin: 0;
-  font-size: 27px;
-  line-height: 1.2;
-}
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value="leader"
+          >
+          Leader
+        </label>
 
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value="follower"
+          >
+          Follower
+        </label>
 
-.app-header p {
-  margin: 6px 0 0;
-  color: #888;
-  font-size: 13px;
-  letter-spacing: 0.03em;
-}
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value="both"
+          >
+          Both
+        </label>
 
+      </div>
 
-/* ========================================
-   カード
-======================================== */
 
-.card {
-  margin-bottom: 16px;
-  padding: 20px;
+      <p class="field-label">
+        Judge
+      </p>
 
-  background: #fff;
+      <label class="judge-selector">
 
-  border-radius: 14px;
+        <input
+          type="checkbox"
+          id="judgeAvailable"
+          checked
+        >
 
-  box-shadow:
-    0 2px 10px
-    rgba(0, 0, 0, 0.06);
-}
+        <span>
+          Judge可能
+        </span>
 
+      </label>
 
-.card h2 {
-  margin: 0;
-  font-size: 20px;
-}
 
+      <button
+        type="button"
+        id="addParticipant"
+        class="add-button"
+      >
+        参加する
+      </button>
 
-.section-description {
-  margin: 9px 0 18px;
+    </section>
 
-  color: #666;
 
-  font-size: 14px;
-  line-height: 1.6;
-}
+    <!-- =====================================
+         現在のRound
+    ====================================== -->
+    <section
+      id="roundResultCard"
+      class="card round-result-card hidden"
+    >
 
+      <div class="round-header">
 
-/* ========================================
-   入力
-======================================== */
+        <div>
 
-.field-label {
-  display: block;
+          <div class="round-label">
+            CURRENT ROUND
+          </div>
 
-  margin: 20px 0 8px;
+          <h2 id="roundTitle">
+            Round 1
+          </h2>
 
-  font-size: 14px;
-  font-weight: bold;
-}
+        </div>
 
 
-.name-input {
-  width: 100%;
+        <span id="battleCount"></span>
 
-  padding: 13px 14px;
+      </div>
 
-  border: 1px solid #bbb;
-  border-radius: 9px;
 
-  background: #fff;
+      <!-- 自分の出場状況 -->
+      <div
+        id="roundPersonalStatus"
+        class="round-personal-status hidden"
+      ></div>
 
-  font-size: 16px;
-}
 
+      <div id="battleList"></div>
 
-/* ========================================
-   Role
-======================================== */
 
-.role-selector {
-  display: flex;
-  flex-wrap: wrap;
+      <div
+        id="waitingArea"
+        class="waiting-area hidden"
+      >
 
-  gap: 18px;
+        <h3>
+          今回未出場
+        </h3>
 
-  margin-bottom: 4px;
-}
+        <div id="waitingList"></div>
 
+      </div>
 
-.role-selector label {
-  display: flex;
+    </section>
 
-  align-items: center;
 
-  gap: 6px;
+    <!-- =====================================
+         参加者一覧
+    ====================================== -->
+    <section
+      id="participantListCard"
+      class="card participant-list-card"
+    >
 
-  cursor: pointer;
-}
+      <div class="list-header">
 
+        <h2>参加者</h2>
 
-.role-selector input {
-  margin: 0;
-}
+        <span id="participantCount">
+          0人
+        </span>
 
+      </div>
 
-/* ========================================
-   Judge
-======================================== */
 
-.judge-selector {
-  display: flex;
+      <div
+        id="emptyMessage"
+        class="empty-message"
+      >
+        参加者はまだ登録されていません。
+      </div>
 
-  align-items: center;
 
-  gap: 8px;
+      <div id="participantList"></div>
 
-  margin-bottom: 22px;
+    </section>
 
-  cursor: pointer;
-}
 
+    <!-- =====================================
+         管理者：Round生成
+    ====================================== -->
+    <section
+      id="roundControlCard"
+      class="card admin-card hidden"
+    >
 
-.judge-selector input {
-  width: 18px;
-  height: 18px;
+      <div class="admin-section-label">
+        ADMIN
+      </div>
 
-  margin: 0;
-}
+      <h2>
+        Round生成
+      </h2>
 
+      <p class="section-description">
+        出場回数・Pair履歴・対戦履歴・Judge回数を考慮して生成します。
+      </p>
 
-/* ========================================
-   メインボタン
-======================================== */
 
-.add-button,
-.generate-button {
-  display: block;
+      <button
+        type="button"
+        id="generateRound"
+        class="generate-button"
+      >
+        Generate Round
+      </button>
 
-  width: 100%;
 
-  padding: 14px;
+      <div class="save-note">
+        Round・D/J回数・履歴はFirebaseへ保存されます。
+      </div>
 
-  border: 0;
-  border-radius: 9px;
 
-  background: #222;
-  color: #fff;
+      <button
+        type="button"
+        id="resetRoundData"
+        class="reset-button"
+      >
+        Roundデータをリセット
+      </button>
 
-  font-size: 16px;
-  font-weight: bold;
+    </section>
 
-  cursor: pointer;
-}
 
+    <!-- =====================================
+         管理者：Pair履歴
+    ====================================== -->
+    <details
+      id="pairHistoryDetails"
+      class="card history-details hidden"
+    >
 
-.add-button:hover,
-.generate-button:hover {
-  background: #444;
-}
+      <summary class="history-summary">
 
+        <span>
+          Pair履歴
+        </span>
 
-.add-button:disabled,
-.generate-button:disabled {
-  background: #aaa;
-  cursor: default;
-}
+        <span class="history-summary-note">
+          管理者
+        </span>
 
+      </summary>
 
-/* ========================================
-   サブボタン
-======================================== */
 
-.secondary-button {
-  display: block;
+      <div class="history-content">
 
-  width: 100%;
+        <p class="section-description">
+          過去に組んだペアと回数を確認できます。
+        </p>
 
-  margin-top: 14px;
 
-  padding: 12px;
+        <div
+          id="pairHistoryEmpty"
+          class="empty-message"
+        >
+          Pair履歴はまだありません。
+        </div>
 
-  border: 1px solid #ccc;
-  border-radius: 9px;
 
-  background: #fff;
-  color: #333;
+        <div id="pairHistoryList"></div>
 
-  font-size: 14px;
-  font-weight: bold;
+      </div>
 
-  cursor: pointer;
-}
+    </details>
 
 
-.secondary-button:hover {
-  background: #f5f5f5;
-}
+    <!-- =====================================
+         管理者：最多対戦相手
+    ====================================== -->
+    <details
+      id="opponentHistoryDetails"
+      class="card history-details hidden"
+    >
 
+      <summary class="history-summary">
 
-.reset-button {
-  display: block;
+        <span>
+          最多対戦相手
+        </span>
 
-  margin: 12px auto 0;
+        <span class="history-summary-note">
+          管理者
+        </span>
 
-  padding: 5px 8px;
+      </summary>
 
-  border: 0;
 
-  background: transparent;
-  color: #777;
+      <div class="history-content">
 
-  font-size: 12px;
-  text-decoration: underline;
+        <p class="section-description">
+          同じRoleで最も多く対戦している相手を表示します。
+        </p>
 
-  cursor: pointer;
-}
 
+        <div class="opponent-section">
 
-.save-note {
-  margin-top: 10px;
+          <h3>
+            Leader
+          </h3>
 
-  color: #999;
+          <div
+            id="leaderOpponentEmpty"
+            class="empty-message"
+          >
+            Leaderの対戦履歴はまだありません。
+          </div>
 
-  font-size: 11px;
-  line-height: 1.5;
+          <div id="leaderOpponentList"></div>
 
-  text-align: center;
-}
+        </div>
 
 
-/* ========================================
-   一覧共通
-======================================== */
+        <div class="opponent-section">
 
-.list-header {
-  display: flex;
+          <h3>
+            Follower
+          </h3>
 
-  align-items: center;
-  justify-content: space-between;
+          <div
+            id="followerOpponentEmpty"
+            class="empty-message"
+          >
+            Followerの対戦履歴はまだありません。
+          </div>
 
-  gap: 12px;
+          <div id="followerOpponentList"></div>
 
-  margin-bottom: 10px;
-}
+        </div>
 
+      </div>
 
-#participantCount,
-#firebaseStatus {
-  color: #777;
+    </details>
 
-  font-size: 13px;
-}
 
+    <!-- =====================================
+         管理・Firebase
+    ====================================== -->
+    <details
+      id="systemDetails"
+      class="system-details"
+    >
 
-.empty-message {
-  padding: 20px 0 8px;
+      <summary>
+        管理・接続
+      </summary>
 
-  color: #999;
 
-  font-size: 14px;
+      <div class="system-content">
 
-  text-align: center;
-}
+        <div class="list-header">
 
+          <span class="system-title">
+            Firebase
+          </span>
 
-/* ========================================
-   参加者一覧
-======================================== */
+          <span id="firebaseStatus">
+            確認中
+          </span>
 
-.participant-item {
-  border-bottom:
-    1px solid #e9e9e9;
-}
+        </div>
 
 
-.participant-item:last-child {
-  border-bottom: none;
-}
+        <div
+          id="firebaseUserInfo"
+          class="system-info"
+        >
+          Firebaseへ接続しています。
+        </div>
 
 
-.participant-row {
-  display: grid;
+        <button
+          type="button"
+          id="adminLoginButton"
+          class="secondary-button"
+        >
+          管理者としてGoogleログイン
+        </button>
 
-  grid-template-columns:
-    minmax(0, 1fr)
-    76px
-    66px
-    28px
-    34px;
 
-  align-items: center;
+        <button
+          type="button"
+          id="adminLogoutButton"
+          class="reset-button hidden"
+        >
+          管理者モードを終了
+        </button>
 
-  gap: 6px;
+      </div>
 
-  min-height: 54px;
+    </details>
 
-  padding: 8px 4px;
-}
+  </main>
 
 
-.participant-row.can-manage {
-  cursor: pointer;
-}
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"></script>
 
 
-.participant-row.is-resting {
-  opacity: 0.45;
-}
+  <!-- アプリ -->
+  <script src="script.js?v=25"></script>
 
+</body>
 
-.participant-main {
-  min-width: 0;
-}
-
-
-.participant-name-line {
-  display: flex;
-
-  align-items: center;
-
-  gap: 6px;
-
-  min-width: 0;
-}
-
-
-.participant-name {
-  min-width: 0;
-
-  font-size: 16px;
-  font-weight: 600;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-
-.participant-self-badge {
-  flex-shrink: 0;
-
-  padding: 2px 5px;
-
-  border-radius: 20px;
-
-  background: #222;
-  color: #fff;
-
-  font-size: 9px;
-  font-weight: bold;
-}
-
-
-.participant-rest-status {
-  margin-top: 2px;
-
-  color: #777;
-
-  font-size: 10px;
-  font-weight: bold;
-}
-
-
-.participant-role {
-  padding: 5px 8px;
-
-  background: #eee;
-
-  border-radius: 20px;
-
-  font-size: 12px;
-  font-weight: bold;
-
-  text-align: center;
-}
-
-
-.participant-count {
-  color: #555;
-
-  font-size: 11px;
-  font-weight: bold;
-
-  text-align: center;
-
-  white-space: nowrap;
-}
-
-
-.participant-judge {
-  font-size: 12px;
-  font-weight: bold;
-
-  text-align: center;
-
-  white-space: nowrap;
-}
-
-
-.participant-judge.unavailable {
-  color: #aaa;
-}
-
-
-.delete-button {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  width: 32px;
-  height: 32px;
-
-  padding: 0;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: #eee;
-  color: #555;
-
-  font-size: 20px;
-
-  cursor: pointer;
-}
-
-
-.delete-placeholder {
-  width: 32px;
-  height: 32px;
-}
-
-
-/* ========================================
-   休憩・復帰
-======================================== */
-
-.participant-action-panel {
-  padding: 0 4px 10px;
-}
-
-
-.participant-action-button {
-  width: 100%;
-
-  padding: 9px 12px;
-
-  border: 1px solid #ddd;
-  border-radius: 8px;
-
-  background: #fafafa;
-
-  color: #444;
-
-  font-size: 13px;
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-
-.participant-action-note {
-  margin-top: 6px;
-
-  color: #999;
-
-  font-size: 10px;
-
-  text-align: center;
-}
-
-
-/* ========================================
-   Current Round
-======================================== */
-
-.round-result-card {
-  border:
-    1px solid #e2e2e2;
-}
-
-
-.round-label {
-  margin-bottom: 3px;
-
-  color: #999;
-
-  font-size: 10px;
-  font-weight: bold;
-
-  letter-spacing: 0.12em;
-}
-
-
-.round-header {
-  display: flex;
-
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 12px;
-
-  margin-bottom: 18px;
-}
-
-
-#battleCount {
-  color: #777;
-
-  font-size: 13px;
-
-  white-space: nowrap;
-}
-
-
-/* ========================================
-   Battle
-======================================== */
-
-.battle-card {
-  margin-bottom: 18px;
-
-  padding: 15px;
-
-  background: #f7f7f8;
-
-  border:
-    1px solid #e6e6e6;
-
-  border-radius: 12px;
-}
-
-
-.battle-card:last-child {
-  margin-bottom: 0;
-}
-
-
-.battle-title {
-  margin-bottom: 12px;
-
-  font-size: 15px;
-  font-weight: bold;
-}
-
-
-.pair-box {
-  padding: 12px;
-
-  background: #fff;
-
-  border-radius: 9px;
-}
-
-
-.pair-label {
-  margin-bottom: 8px;
-
-  color: #888;
-
-  font-size: 11px;
-  font-weight: bold;
-}
-
-
-.pair-person {
-  display: grid;
-
-  grid-template-columns:
-    72px
-    minmax(0, 1fr);
-
-  gap: 8px;
-
-  margin-bottom: 6px;
-
-  font-size: 14px;
-}
-
-
-.pair-person:last-child {
-  margin-bottom: 0;
-}
-
-
-.person-role {
-  color: #888;
-}
-
-
-.person-name {
-  font-weight: bold;
-}
-
-
-.vs {
-  padding: 8px 0;
-
-  color: #999;
-
-  font-size: 12px;
-  font-weight: bold;
-
-  text-align: center;
-}
-
-
-/* ========================================
-   Judge
-======================================== */
-
-.judge-box {
-  margin-top: 13px;
-
-  padding: 11px;
-
-  background: #e9ebee;
-
-  border-radius: 9px;
-}
-
-
-.judge-box-title {
-  margin-bottom: 8px;
-
-  color: #666;
-
-  font-size: 11px;
-  font-weight: bold;
-}
-
-
-.judge-list {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 7px;
-}
-
-
-.judge-person {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 5px;
-
-  padding: 6px 9px;
-
-  background: #fff;
-
-  border-radius: 20px;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-
-.judge-role {
-  color: #888;
-
-  font-size: 10px;
-  font-weight: normal;
-}
-
-
-.judge-warning {
-  color: #777;
-
-  font-size: 12px;
-}
-
-
-/* ========================================
-   今回未出場
-======================================== */
-
-.waiting-area {
-  margin-top: 22px;
-
-  padding-top: 18px;
-
-  border-top:
-    1px solid #e4e4e4;
-}
-
-
-.waiting-area h3 {
-  margin: 0 0 10px;
-
-  font-size: 14px;
-}
-
-
-#waitingList {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 7px;
-}
-
-
-.waiting-person {
-  padding: 6px 10px;
-
-  background: #eee;
-
-  border-radius: 20px;
-
-  font-size: 12px;
-}
-
-
-/* ========================================
-   管理者
-======================================== */
-
-.admin-card {
-  border:
-    1px solid #dedede;
-}
-
-
-.admin-section-label {
-  margin-bottom: 5px;
-
-  color: #999;
-
-  font-size: 10px;
-  font-weight: bold;
-
-  letter-spacing: 0.12em;
-}
-
-
-/* ========================================
-   履歴
-======================================== */
-
-.history-details {
-  padding: 0;
-
-  overflow: hidden;
-}
-
-
-.history-summary {
-  display: flex;
-
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 17px 20px;
-
-  font-size: 17px;
-  font-weight: bold;
-
-  cursor: pointer;
-
-  list-style: none;
-}
-
-
-.history-summary::-webkit-details-marker {
-  display: none;
-}
-
-
-.history-summary::after {
-  content: "＋";
-
-  margin-left: 10px;
-
-  color: #777;
-
-  font-size: 20px;
-  font-weight: normal;
-}
-
-
-.history-details[open]
-.history-summary::after {
-  content: "−";
-}
-
-
-.history-summary-note {
-  margin-left: auto;
-  margin-right: 10px;
-
-  padding: 4px 8px;
-
-  background: #eee;
-
-  border-radius: 20px;
-
-  color: #666;
-
-  font-size: 10px;
-  font-weight: bold;
-}
-
-
-.history-content {
-  padding: 0 20px 20px;
-
-  border-top:
-    1px solid #eee;
-}
-
-
-.history-row {
-  display: flex;
-
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 12px;
-
-  padding: 10px 4px;
-
-  border-bottom:
-    1px solid #eee;
-}
-
-
-.history-names {
-  min-width: 0;
-
-  font-size: 14px;
-  font-weight: 600;
-}
-
-
-.history-count {
-  flex-shrink: 0;
-
-  color: #666;
-
-  font-size: 13px;
-  font-weight: bold;
-}
-
-
-/* ========================================
-   対戦履歴
-======================================== */
-
-.opponent-section {
-  margin-top: 22px;
-}
-
-
-.opponent-section +
-.opponent-section {
-  padding-top: 20px;
-
-  border-top:
-    1px solid #eee;
-}
-
-
-.opponent-section h3 {
-  margin: 0 0 8px;
-
-  font-size: 16px;
-}
-
-
-.opponent-row {
-  display: grid;
-
-  grid-template-columns:
-    minmax(70px, 1fr)
-    24px
-    minmax(0, 2fr)
-    48px;
-
-  align-items: center;
-
-  gap: 6px;
-
-  padding: 9px 4px;
-
-  border-bottom:
-    1px solid #eee;
-}
-
-
-.opponent-name {
-  min-width: 0;
-
-  font-size: 14px;
-  font-weight: 600;
-}
-
-
-.opponent-arrow {
-  color: #999;
-
-  text-align: center;
-}
-
-
-.opponent-targets {
-  min-width: 0;
-
-  font-size: 14px;
-
-  overflow-wrap: anywhere;
-}
-
-
-.opponent-count {
-  color: #666;
-
-  font-size: 12px;
-  font-weight: bold;
-
-  text-align: right;
-
-  white-space: nowrap;
-}
-
-
-/* ========================================
-   管理・接続
-======================================== */
-
-.system-details {
-  margin-top: 28px;
-
-  color: #777;
-}
-
-
-.system-details > summary {
-  padding: 10px 4px;
-
-  color: #888;
-
-  font-size: 12px;
-
-  text-align: center;
-
-  cursor: pointer;
-
-  list-style: none;
-}
-
-
-.system-details > summary::-webkit-details-marker {
-  display: none;
-}
-
-
-.system-details > summary::before {
-  content: "⚙ ";
-}
-
-
-.system-content {
-  margin-top: 6px;
-
-  padding: 16px;
-
-  background: #fff;
-
-  border-radius: 12px;
-
-  box-shadow:
-    0 2px 8px
-    rgba(0, 0, 0, 0.05);
-}
-
-
-.system-title {
-  font-size: 13px;
-  font-weight: bold;
-}
-
-
-.system-info {
-  color: #888;
-
-  font-size: 11px;
-  line-height: 1.5;
-
-  overflow-wrap: anywhere;
-}
-
-
-/* ========================================
-   スマートフォン
-======================================== */
-
-@media (max-width: 480px) {
-
-  .container {
-    padding:
-      18px
-      12px
-      40px;
-  }
-
-
-  .app-header {
-    margin-bottom: 18px;
-  }
-
-
-  .app-header h1 {
-    font-size: 23px;
-  }
-
-
-  .card {
-    padding: 17px;
-  }
-
-
-  .history-details {
-    padding: 0;
-  }
-
-
-  .history-summary {
-    padding:
-      16px
-      17px;
-  }
-
-
-  .history-content {
-    padding:
-      0
-      17px
-      17px;
-  }
-
-
-  .participant-row {
-    grid-template-columns:
-      minmax(0, 1fr)
-      64px
-      58px
-      24px
-      30px;
-
-    gap: 4px;
-  }
-
-
-  .participant-role {
-    padding: 5px;
-
-    font-size: 11px;
-  }
-
-
-  .participant-count {
-    font-size: 10px;
-  }
-
-
-  .delete-button,
-  .delete-placeholder {
-    width: 30px;
-    height: 30px;
-  }
-
-
-  .battle-card {
-    padding: 13px;
-  }
-
-
-  .pair-box {
-    padding: 11px;
-  }
-
-
-  .opponent-row {
-    grid-template-columns:
-      minmax(55px, 1fr)
-      20px
-      minmax(0, 2fr)
-      42px;
-
-    gap: 4px;
-  }
-}
+</html>
