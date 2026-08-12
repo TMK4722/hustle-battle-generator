@@ -100,7 +100,6 @@ function initializeFirebaseConnection() {
 
         if (!user) {
           stopRealtimeListeners();
-
           participantsLoaded = false;
           eventStateLoaded = false;
 
@@ -153,7 +152,6 @@ async function checkCurrentUserRole(user) {
     adminLogoutButton.classList.add("hidden");
 
     updatePermissionUI();
-
     return;
   }
 
@@ -182,6 +180,7 @@ async function checkCurrentUserRole(user) {
         "管理者認証OK",
         user.email || ""
       );
+
     } else {
       updateFirebaseStatus(
         "管理者権限なし",
@@ -216,8 +215,7 @@ async function loginAsAdmin() {
   });
 
   try {
-    const user =
-      firebaseAuth.currentUser;
+    const user = firebaseAuth.currentUser;
 
     if (user && user.isAnonymous) {
       try {
@@ -260,7 +258,6 @@ async function exitAdminMode() {
 
   try {
     await firebaseAuth.signOut();
-
   } catch (error) {
     console.error(error);
   }
@@ -343,8 +340,7 @@ function startParticipantsListener() {
       .onSnapshot(
 
         function (snapshot) {
-          const previousMap =
-            new Map();
+          const previousMap = new Map();
 
           participants.forEach(
             function (participant) {
@@ -359,12 +355,8 @@ function startParticipantsListener() {
 
           snapshot.forEach(
             function (doc) {
-              const remote =
-                doc.data();
-
-              const id =
-                doc.id;
-
+              const remote = doc.data();
+              const id = doc.id;
               const stats =
                 participantStats[id] || {};
 
@@ -396,24 +388,16 @@ function startParticipantsListener() {
                   remote.active !== false,
 
                 danceCount:
-                  getNumberOrZero(
-                    stats.danceCount
-                  ),
+                  getNumberOrZero(stats.danceCount),
 
                 judgeCount:
-                  getNumberOrZero(
-                    stats.judgeCount
-                  ),
+                  getNumberOrZero(stats.judgeCount),
 
                 danceFairCount:
-                  getNumberOrZero(
-                    stats.danceFairCount
-                  ),
+                  getNumberOrZero(stats.danceFairCount),
 
                 judgeFairCount:
-                  getNumberOrZero(
-                    stats.judgeFairCount
-                  )
+                  getNumberOrZero(stats.judgeFairCount)
               });
             }
           );
@@ -427,18 +411,14 @@ function startParticipantsListener() {
             }
           );
 
-          participants =
-            incoming;
-
-          participantsLoaded =
-            true;
+          participants = incoming;
+          participantsLoaded = true;
 
           maybeInitializeSharedState(
             previousMap
           );
 
           applyStatsToParticipants();
-
           renderAll();
         },
 
@@ -512,7 +492,6 @@ function startEventStateListener() {
           maybeInitializeSharedState();
 
           applyStatsToParticipants();
-
           renderAll();
         },
 
@@ -542,9 +521,7 @@ async function maybeInitializeSharedState(
 
   if (!eventStateExists) {
     initializeMissingParticipantStats();
-
     await saveEventState();
-
     return;
   }
 
@@ -554,7 +531,9 @@ async function maybeInitializeSharedState(
 
   if (
     previousMap &&
-    adjustResumedParticipants(previousMap)
+    adjustResumedParticipants(
+      previousMap
+    )
   ) {
     changed = true;
   }
@@ -593,7 +572,6 @@ async function addParticipant() {
     );
 
     nameInput.focus();
-
     return;
   }
 
@@ -703,7 +681,6 @@ async function addParticipant() {
     }
 
     resetRegistrationForm();
-
     nameInput.focus();
 
   } catch (error) {
@@ -1084,7 +1061,6 @@ async function saveParticipantEdit() {
     );
 
     editParticipantName.focus();
-
     return;
   }
 
@@ -1154,15 +1130,10 @@ async function saveParticipantEdit() {
     const id =
       String(participant.id);
 
-    participant.name =
-      name;
-
+    participant.name = name;
     participant.participationType =
       participationType;
-
-    participant.role =
-      role;
-
+    participant.role = role;
     participant.judgeAvailable =
       judgeAvailable;
 
@@ -1508,6 +1479,13 @@ async function generateRound() {
     return;
   }
 
+  /*
+    前Roundの最終BattleでDanceまたはJudgeを担当した人。
+    次RoundのBattle 1ではできるだけ避ける。
+  */
+  const previousFinalBattleParticipantIds =
+    getPreviousFinalBattleParticipantIds();
+
   const activeDanceParticipants =
     participants.filter(
       function (participant) {
@@ -1641,6 +1619,15 @@ async function generateRound() {
       pairs
     );
 
+  /*
+    誰が出場するかは変えず、
+    Battleの並び順だけを調整する。
+  */
+  prioritizeFirstBattleForRest(
+    battles,
+    previousFinalBattleParticipantIds
+  );
+
   const usedIds =
     new Set();
 
@@ -1694,11 +1681,18 @@ async function generateRound() {
   );
 
   battles.forEach(
-    function (battle) {
+    function (
+      battle,
+      battleIndex
+    ) {
       battle.judges =
         selectJudgesForBattle(
           battle,
-          3
+          3,
+
+          battleIndex === 0
+            ? previousFinalBattleParticipantIds
+            : new Set()
         );
 
       battle.judges.forEach(
@@ -1739,6 +1733,156 @@ async function generateRound() {
   await saveEventState();
 
   renderAll();
+}
+
+/*
+  前Round最終Battleで
+  DanceまたはJudgeを担当した人を取得。
+*/
+function getPreviousFinalBattleParticipantIds() {
+  const result =
+    new Set();
+
+  if (
+    !lastRoundData ||
+    !Array.isArray(
+      lastRoundData.battles
+    ) ||
+    lastRoundData.battles.length === 0
+  ) {
+    return result;
+  }
+
+  const finalBattle =
+    lastRoundData.battles[
+      lastRoundData.battles.length - 1
+    ];
+
+  if (!finalBattle) {
+    return result;
+  }
+
+  const ids = [
+    finalBattle.pairA &&
+      finalBattle.pairA.leaderId,
+
+    finalBattle.pairA &&
+      finalBattle.pairA.followerId,
+
+    finalBattle.pairB &&
+      finalBattle.pairB.leaderId,
+
+    finalBattle.pairB &&
+      finalBattle.pairB.followerId,
+
+    ...(
+      finalBattle.judgeIds ||
+      []
+    )
+  ];
+
+  ids.forEach(
+    function (id) {
+      if (
+        id !== null &&
+        typeof id !== "undefined"
+      ) {
+        result.add(
+          String(id)
+        );
+      }
+    }
+  );
+
+  return result;
+}
+
+/*
+  現RoundのBattleの中から、
+  前Round最終Battleの担当者が
+  最も少ないBattleをBattle 1へ移動する。
+*/
+function prioritizeFirstBattleForRest(
+  battles,
+  avoidIds
+) {
+  if (
+    !Array.isArray(battles) ||
+    battles.length <= 1 ||
+    !avoidIds ||
+    avoidIds.size === 0
+  ) {
+    return;
+  }
+
+  let bestIndex = 0;
+
+  let bestOverlap =
+    getBattleDanceOverlapCount(
+      battles[0],
+      avoidIds
+    );
+
+  for (
+    let i = 1;
+    i < battles.length;
+    i++
+  ) {
+    const overlap =
+      getBattleDanceOverlapCount(
+        battles[i],
+        avoidIds
+      );
+
+    if (
+      overlap <
+      bestOverlap
+    ) {
+      bestOverlap = overlap;
+      bestIndex = i;
+    }
+  }
+
+  if (bestIndex !== 0) {
+    [
+      battles[0],
+      battles[bestIndex]
+    ] = [
+      battles[bestIndex],
+      battles[0]
+    ];
+  }
+}
+
+function getBattleDanceOverlapCount(
+  battle,
+  avoidIds
+) {
+  const dancerIds = [
+    battle.pairA.leader.id,
+    battle.pairA.follower.id,
+    battle.pairB.leader.id,
+    battle.pairB.follower.id
+  ];
+
+  return dancerIds.reduce(
+    function (
+      count,
+      id
+    ) {
+      return (
+        count +
+        (
+          avoidIds.has(
+            String(id)
+          )
+            ? 1
+            : 0
+        )
+      );
+    },
+    0
+  );
 }
 
 function createFairPairs(
@@ -1913,7 +2057,8 @@ function getBattleOpponentScore(
 
 function selectJudgesForBattle(
   battle,
-  requestedCount
+  requestedCount,
+  avoidIds = new Set()
 ) {
   const dancerIds =
     new Set([
@@ -1959,7 +2104,8 @@ function selectJudgesForBattle(
     function (combination) {
       const score =
         getJudgeCombinationScore(
-          combination
+          combination,
+          avoidIds
         );
 
       if (
@@ -1993,7 +2139,8 @@ function selectJudgesForBattle(
 }
 
 function getJudgeCombinationScore(
-  judges
+  judges,
+  avoidIds = new Set()
 ) {
   const counts =
     judges.map(
@@ -2017,6 +2164,33 @@ function getJudgeCombinationScore(
       0
     );
 
+  /*
+    Judge公平性が同じ場合は、
+    前Round最終Battleの担当者を避ける。
+  */
+  const continuityPenalty =
+    judges.reduce(
+      function (
+        count,
+        judge
+      ) {
+        return (
+          count +
+          (
+            avoidIds.has(
+              String(judge.id)
+            )
+              ? 1
+              : 0
+          )
+        );
+      },
+      0
+    );
+
+  /*
+    JudgeのみはRole構成上は中立扱い。
+  */
   const danceJudgeRoles =
     judges
       .filter(
@@ -2052,6 +2226,8 @@ function getJudgeCombinationScore(
   return {
     maximumCount: maximumCount,
     totalCount: totalCount,
+    continuityPenalty:
+      continuityPenalty,
     rolePenalty: rolePenalty
   };
 }
@@ -2074,6 +2250,16 @@ function compareJudgeScores(a, b) {
     return (
       a.totalCount -
       b.totalCount
+    );
+  }
+
+  if (
+    a.continuityPenalty !==
+    b.continuityPenalty
+  ) {
+    return (
+      a.continuityPenalty -
+      b.continuityPenalty
     );
   }
 
@@ -2649,17 +2835,10 @@ function renderParticipantList() {
             ? "復帰するとBattle・Judgeの対象に戻ります。"
             : "休憩中はBattle・Judgeの対象外になります。";
 
-        panel.appendChild(
-          button
-        );
+        panel.appendChild(button);
+        panel.appendChild(note);
 
-        panel.appendChild(
-          note
-        );
-
-        item.appendChild(
-          panel
-        );
+        item.appendChild(panel);
       }
 
       participantList.appendChild(
@@ -2782,13 +2961,8 @@ function renderPairHistory() {
         item.count +
         "回";
 
-      row.appendChild(
-        names
-      );
-
-      row.appendChild(
-        count
-      );
+      row.appendChild(names);
+      row.appendChild(count);
 
       pairHistoryList.appendChild(
         row
@@ -2987,8 +3161,7 @@ function getTopOpponents(
 function getParticipantsUsedAsRole(
   role
 ) {
-  const ids =
-    new Set();
+  const ids = new Set();
 
   const history =
     role === "leader"
@@ -3653,13 +3826,8 @@ function createJudgeElement(
               judge.role
             );
 
-      item.appendChild(
-        name
-      );
-
-      item.appendChild(
-        role
-      );
+      item.appendChild(name);
+      item.appendChild(role);
 
       list.appendChild(
         item
