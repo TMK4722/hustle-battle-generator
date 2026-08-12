@@ -1481,7 +1481,7 @@ async function generateRound() {
 
   /*
     前Roundの最終BattleでDanceまたはJudgeを担当した人。
-    次RoundのBattle 1ではできるだけ避ける。
+    次RoundのBattle 1では、できる限りDanceにもJudgeにも配置しない。
   */
   const previousFinalBattleParticipantIds =
     getPreviousFinalBattleParticipantIds();
@@ -1592,6 +1592,10 @@ async function generateRound() {
     return;
   }
 
+  /*
+    誰がこのRoundにDance出場するかは従来どおり
+    danceFairCountで決める。
+  */
   const selectedLeaders =
     sortByDanceCount(
       leaders
@@ -1608,15 +1612,17 @@ async function generateRound() {
       usablePairCount
     );
 
-  const pairs =
-    createFairPairs(
-      selectedLeaders,
-      selectedFollowers
-    );
-
+  /*
+    v30:
+    出場メンバーは変えず、Battle 1だけ先に決める。
+    前Round最終Battle担当者との重複人数を最優先で最小化し、
+    その条件内でPair履歴・対戦履歴が少ない組合せを選ぶ。
+    残りの参加者は従来ロジックでPair/Battleを作る。
+  */
   const battles =
-    createFairBattles(
-      pairs,
+    createRoundBattlesWithProtectedFirstBattle(
+      selectedLeaders,
+      selectedFollowers,
       previousFinalBattleParticipantIds
     );
 
@@ -1790,216 +1796,209 @@ function getPreviousFinalBattleParticipantIds() {
 }
 
 /*
-  DanceのPair自体は変更せず、
-  前Round最終Battleの担当者と連続しにくいように
-  Pair同士のBattle構成と順番を決める。
+  v30:
+  Battle 1を先に決めてから、残りを従来ロジックで組む。
 
-  Battle 1は「前Round最終Battleとの重複人数」を最優先で最小化する。
-  重複人数が同じ場合は、これまでどおり同Role対戦履歴が少ない組合せを優先する。
+  1. 今Roundに出るLeader/Followerはすでに確定済み。
+  2. Battle 1の2 Leader + 2 Followerを全候補から比較。
+  3. 前Round最終Battleとの重複人数を最優先で最小化。
+  4. 同条件ならPair履歴、同Role対戦履歴が少ないものを優先。
+  5. 残りは従来どおり公平にPair/Battleを生成。
 */
-function createFairBattles(
-  pairs,
-  firstBattleAvoidIds = new Set()
+function createRoundBattlesWithProtectedFirstBattle(
+  selectedLeaders,
+  selectedFollowers,
+  avoidIds
 ) {
   const battles = [];
-  const availablePairs = [...pairs];
 
-  if (availablePairs.length < 2) {
+  if (
+    selectedLeaders.length < 2 ||
+    selectedFollowers.length < 2
+  ) {
     return battles;
   }
 
-  /*
-    最初のBattleだけは、全Pairの組合せを確認して
-    Round境界の連続を最小化する。
-  */
-  const firstBattlePairIndexes =
-    findBestFirstBattlePairIndexes(
-      availablePairs,
-      firstBattleAvoidIds
+  const firstBattle =
+    selectProtectedFirstBattle(
+      selectedLeaders,
+      selectedFollowers,
+      avoidIds
     );
 
-  if (firstBattlePairIndexes) {
-    const firstIndex =
-      firstBattlePairIndexes[0];
-    const secondIndex =
-      firstBattlePairIndexes[1];
-
-    const pairA =
-      availablePairs[firstIndex];
-    const pairB =
-      availablePairs[secondIndex];
-
-    battles.push({
-      pairA: pairA,
-      pairB: pairB,
-      judges: []
-    });
-
-    /*
-      大きいindexから削除して、
-      配列のindexずれを防ぐ。
-    */
-    [firstIndex, secondIndex]
-      .sort(
-        function (a, b) {
-          return b - a;
-        }
-      )
-      .forEach(
-        function (index) {
-          availablePairs.splice(
-            index,
-            1
-          );
-        }
-      );
+  if (!firstBattle) {
+    return battles;
   }
 
-  /*
-    Battle 2以降は従来どおり、
-    同Role対戦履歴が少ない組合せを優先する。
-  */
-  const remainingPairs =
-    shuffleArray(
-      availablePairs
-    );
+  battles.push({
+    pairA: firstBattle.pairA,
+    pairB: firstBattle.pairB,
+    judges: []
+  });
 
-  while (
-    remainingPairs.length >= 2
-  ) {
-    const pairA =
-      remainingPairs.shift();
+  const firstBattleLeaderIds =
+    new Set([
+      String(firstBattle.pairA.leader.id),
+      String(firstBattle.pairB.leader.id)
+    ]);
 
-    let minimumScore =
-      Infinity;
+  const firstBattleFollowerIds =
+    new Set([
+      String(firstBattle.pairA.follower.id),
+      String(firstBattle.pairB.follower.id)
+    ]);
 
-    let candidates = [];
-
-    remainingPairs.forEach(
-      function (pair) {
-        const score =
-          getBattleOpponentScore(
-            pairA,
-            pair
-          );
-
-        if (
-          score <
-          minimumScore
-        ) {
-          minimumScore =
-            score;
-
-          candidates =
-            [pair];
-
-        } else if (
-          score ===
-          minimumScore
-        ) {
-          candidates.push(
-            pair
-          );
-        }
+  const remainingLeaders =
+    selectedLeaders.filter(
+      function (participant) {
+        return (
+          !firstBattleLeaderIds.has(
+            String(participant.id)
+          )
+        );
       }
     );
 
-    const pairB =
-      getRandomItem(
-        candidates
+  const remainingFollowers =
+    selectedFollowers.filter(
+      function (participant) {
+        return (
+          !firstBattleFollowerIds.has(
+            String(participant.id)
+          )
+        );
+      }
+    );
+
+  if (
+    remainingLeaders.length >= 2 &&
+    remainingFollowers.length >= 2
+  ) {
+    const remainingPairs =
+      createFairPairs(
+        remainingLeaders,
+        remainingFollowers
       );
 
-    battles.push({
-      pairA: pairA,
-      pairB: pairB,
-      judges: []
-    });
+    const remainingBattles =
+      createFairBattles(
+        remainingPairs
+      );
 
-    remainingPairs.splice(
-      remainingPairs.indexOf(
-        pairB
-      ),
-      1
+    battles.push(
+      ...remainingBattles
     );
   }
 
   return battles;
 }
 
-function findBestFirstBattlePairIndexes(
-  pairs,
+function selectProtectedFirstBattle(
+  leaders,
+  followers,
   avoidIds
 ) {
-  if (pairs.length < 2) {
-    return null;
-  }
-
-  let bestOverlap =
-    Infinity;
-
-  let bestOpponentScore =
-    Infinity;
-
+  let bestScore = null;
   let bestCandidates = [];
 
   for (
-    let i = 0;
-    i < pairs.length - 1;
-    i++
+    let leaderAIndex = 0;
+    leaderAIndex < leaders.length - 1;
+    leaderAIndex++
   ) {
     for (
-      let j = i + 1;
-      j < pairs.length;
-      j++
+      let leaderBIndex = leaderAIndex + 1;
+      leaderBIndex < leaders.length;
+      leaderBIndex++
     ) {
-      const overlap =
-        getPairAvoidOverlapCount(
-          pairs[i],
-          avoidIds
-        )
-        +
-        getPairAvoidOverlapCount(
-          pairs[j],
-          avoidIds
-        );
+      const leaderA =
+        leaders[leaderAIndex];
 
-      const opponentScore =
-        getBattleOpponentScore(
-          pairs[i],
-          pairs[j]
-        );
+      const leaderB =
+        leaders[leaderBIndex];
 
-      if (
-        overlap <
-        bestOverlap
-        ||
-        (
-          overlap ===
-          bestOverlap
-          &&
-          opponentScore <
-          bestOpponentScore
-        )
+      for (
+        let followerAIndex = 0;
+        followerAIndex < followers.length - 1;
+        followerAIndex++
       ) {
-        bestOverlap = overlap;
-        bestOpponentScore =
-          opponentScore;
-        bestCandidates = [
-          [i, j]
-        ];
+        for (
+          let followerBIndex = followerAIndex + 1;
+          followerBIndex < followers.length;
+          followerBIndex++
+        ) {
+          const followerA =
+            followers[followerAIndex];
 
-      } else if (
-        overlap ===
-        bestOverlap
-        &&
-        opponentScore ===
-        bestOpponentScore
-      ) {
-        bestCandidates.push(
-          [i, j]
-        );
+          const followerB =
+            followers[followerBIndex];
+
+          /*
+            同じ4人でもPairの組み方は2通りあるため、
+            両方を評価する。
+          */
+          const arrangements = [
+            {
+              pairA: {
+                leader: leaderA,
+                follower: followerA
+              },
+              pairB: {
+                leader: leaderB,
+                follower: followerB
+              }
+            },
+            {
+              pairA: {
+                leader: leaderA,
+                follower: followerB
+              },
+              pairB: {
+                leader: leaderB,
+                follower: followerA
+              }
+            }
+          ];
+
+          arrangements.forEach(
+            function (arrangement) {
+              const score =
+                getProtectedFirstBattleScore(
+                  arrangement,
+                  avoidIds
+                );
+
+              if (
+                bestScore === null ||
+                compareProtectedFirstBattleScores(
+                  score,
+                  bestScore
+                ) < 0
+              ) {
+                bestScore = score;
+                bestCandidates = [
+                  arrangement
+                ];
+
+              } else if (
+                compareProtectedFirstBattleScores(
+                  score,
+                  bestScore
+                ) === 0
+              ) {
+                bestCandidates.push(
+                  arrangement
+                );
+              }
+            }
+          );
+        }
       }
     }
+  }
+
+  if (bestCandidates.length === 0) {
+    return null;
   }
 
   return getRandomItem(
@@ -2007,36 +2006,105 @@ function findBestFirstBattlePairIndexes(
   );
 }
 
-function getPairAvoidOverlapCount(
-  pair,
+function getProtectedFirstBattleScore(
+  battle,
   avoidIds
 ) {
-  if (
-    !avoidIds ||
-    avoidIds.size === 0
-  ) {
-    return 0;
-  }
+  const people = [
+    battle.pairA.leader,
+    battle.pairA.follower,
+    battle.pairB.leader,
+    battle.pairB.follower
+  ];
 
-  let count = 0;
+  const continuityPenalty =
+    people.reduce(
+      function (
+        count,
+        participant
+      ) {
+        return (
+          count +
+          (
+            avoidIds &&
+            avoidIds.has(
+              String(participant.id)
+            )
+              ? 1
+              : 0
+          )
+        );
+      },
+      0
+    );
 
-  if (
-    avoidIds.has(
-      String(pair.leader.id)
+  const pairHistoryPenalty =
+    getPairHistoryCount(
+      battle.pairA.leader,
+      battle.pairA.follower
     )
-  ) {
-    count++;
-  }
+    +
+    getPairHistoryCount(
+      battle.pairB.leader,
+      battle.pairB.follower
+    );
 
+  const opponentHistoryPenalty =
+    getBattleOpponentScore(
+      battle.pairA,
+      battle.pairB
+    );
+
+  return {
+    continuityPenalty:
+      continuityPenalty,
+    pairHistoryPenalty:
+      pairHistoryPenalty,
+    opponentHistoryPenalty:
+      opponentHistoryPenalty
+  };
+}
+
+function compareProtectedFirstBattleScores(
+  a,
+  b
+) {
+  /*
+    最優先は実際の連戦回避。
+    0人重複が可能なら必ず0人を選ぶ。
+  */
   if (
-    avoidIds.has(
-      String(pair.follower.id)
-    )
+    a.continuityPenalty !==
+    b.continuityPenalty
   ) {
-    count++;
+    return (
+      a.continuityPenalty -
+      b.continuityPenalty
+    );
   }
 
-  return count;
+  /*
+    連続条件が同じなら、
+    同じPairの繰り返しを避ける。
+  */
+  if (
+    a.pairHistoryPenalty !==
+    b.pairHistoryPenalty
+  ) {
+    return (
+      a.pairHistoryPenalty -
+      b.pairHistoryPenalty
+    );
+  }
+
+  /*
+    さらに同条件なら、
+    同Role対戦の繰り返しを避ける。
+  */
+  return (
+    a.opponentHistoryPenalty -
+    b.opponentHistoryPenalty
+  );
 }
 
 function createFairPairs(
@@ -2120,6 +2188,76 @@ function createFairPairs(
   return pairs;
 }
 
+function createFairBattles(pairs) {
+  const battles = [];
+
+  const availablePairs =
+    shuffleArray(
+      pairs
+    );
+
+  while (
+    availablePairs.length >= 2
+  ) {
+    const pairA =
+      availablePairs.shift();
+
+    let minimumScore =
+      Infinity;
+
+    let candidates = [];
+
+    availablePairs.forEach(
+      function (pair) {
+        const score =
+          getBattleOpponentScore(
+            pairA,
+            pair
+          );
+
+        if (
+          score <
+          minimumScore
+        ) {
+          minimumScore =
+            score;
+
+          candidates =
+            [pair];
+
+        } else if (
+          score ===
+          minimumScore
+        ) {
+          candidates.push(
+            pair
+          );
+        }
+      }
+    );
+
+    const pairB =
+      getRandomItem(
+        candidates
+      );
+
+    battles.push({
+      pairA: pairA,
+      pairB: pairB,
+      judges: []
+    });
+
+    availablePairs.splice(
+      availablePairs.indexOf(
+        pairB
+      ),
+      1
+    );
+  }
+
+  return battles;
+}
+
 function getBattleOpponentScore(
   pairA,
   pairB
@@ -2176,9 +2314,9 @@ function selectJudgesForBattle(
     );
 
   /*
-    Battle 1では、前Round最終Battleの担当者以外だけで
-    必要人数を確保できるなら、その人たちだけを候補にする。
-    不足する場合だけ連続担当を許可する。
+    Battle 1では、前Round最終Battle担当者以外だけで
+    Judge必要人数を確保できるなら、その人たちだけを候補にする。
+    これにより回避可能な連続Judgeは発生しない。
   */
   const restedCandidates =
     allCandidates.filter(
@@ -2270,11 +2408,6 @@ function getJudgeCombinationScore(
       0
     );
 
-  /*
-    前Round最終Battleからの連続人数。
-    代替候補が不足した場合だけ、この値を使って
-    連続人数を最小化する。
-  */
   const continuityPenalty =
     judges.reduce(
       function (
@@ -2331,15 +2464,33 @@ function getJudgeCombinationScore(
   }
 
   return {
-    maximumCount: maximumCount,
-    totalCount: totalCount,
     continuityPenalty:
       continuityPenalty,
+    maximumCount: maximumCount,
+    totalCount: totalCount,
     rolePenalty: rolePenalty
   };
 }
 
 function compareJudgeScores(a, b) {
+  /*
+    Battle 1で連続回避が必要な場合は、
+    まず連続人数を最小にする。
+  */
+  if (
+    a.continuityPenalty !==
+    b.continuityPenalty
+  ) {
+    return (
+      a.continuityPenalty -
+      b.continuityPenalty
+    );
+  }
+
+  /*
+    連続条件が同じなら、これまでどおり
+    Judge公平性を優先する。
+  */
   if (
     a.maximumCount !==
     b.maximumCount
@@ -2357,16 +2508,6 @@ function compareJudgeScores(a, b) {
     return (
       a.totalCount -
       b.totalCount
-    );
-  }
-
-  if (
-    a.continuityPenalty !==
-    b.continuityPenalty
-  ) {
-    return (
-      a.continuityPenalty -
-      b.continuityPenalty
     );
   }
 
@@ -3930,8 +4071,8 @@ function createJudgeElement(
         ) === "judgeOnly"
           ? "Judgeのみ"
           : getRoleLabel(
-            judge.role
-          );
+              judge.role
+            );
 
       item.appendChild(name);
       item.appendChild(role);
