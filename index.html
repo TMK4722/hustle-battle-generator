@@ -14,23 +14,15 @@
 
   <main class="container">
 
-    <!-- =====================================
-         ヘッダー
-    ====================================== -->
     <header class="app-header">
-
       <h1>Hustle Battle Generator</h1>
 
       <p>
         Hustle Practice Battle
       </p>
-
     </header>
 
 
-    <!-- =====================================
-         参加登録 / 管理者参加者追加
-    ====================================== -->
     <section
       id="registrationCard"
       class="card registration-card"
@@ -211,9 +203,6 @@
     </section>
 
 
-    <!-- =====================================
-         現在のRound
-    ====================================== -->
     <section
       id="roundResultCard"
       class="card round-result-card hidden"
@@ -232,7 +221,6 @@
           </h2>
 
         </div>
-
 
         <span id="battleCount"></span>
 
@@ -264,9 +252,6 @@
     </section>
 
 
-    <!-- =====================================
-         参加者一覧
-    ====================================== -->
     <section
       id="participantListCard"
       class="card participant-list-card"
@@ -296,9 +281,6 @@
     </section>
 
 
-    <!-- =====================================
-         管理者：Round生成
-    ====================================== -->
     <section
       id="roundControlCard"
       class="card admin-card hidden"
@@ -339,12 +321,70 @@
         Roundデータをリセット
       </button>
 
+
+      <!-- =====================================
+           v33：Owner専用 代理管理者設定
+      ====================================== -->
+      <div
+        id="ownerDelegationPanel"
+        class="hidden"
+      >
+
+        <hr>
+
+        <div class="admin-section-label">
+          OWNER
+        </div>
+
+        <h2>
+          代理管理者
+        </h2>
+
+        <p class="section-description">
+          本人端末と紐づいている参加者1人に、練習会運営の管理者権限を付与できます。
+        </p>
+
+
+        <div
+          id="currentOperatorInfo"
+          class="save-note"
+        >
+          現在、代理管理者はいません。
+        </div>
+
+
+        <select
+          id="operatorParticipantSelect"
+          class="existing-participant-select"
+        >
+          <option value="">
+            代理管理者を選択
+          </option>
+        </select>
+
+
+        <button
+          type="button"
+          id="assignOperatorButton"
+          class="secondary-button"
+        >
+          代理管理者に設定
+        </button>
+
+
+        <button
+          type="button"
+          id="revokeOperatorButton"
+          class="reset-button hidden"
+        >
+          代理管理者を解除
+        </button>
+
+      </div>
+
     </section>
 
 
-    <!-- =====================================
-         管理者：Pair履歴
-    ====================================== -->
     <details
       id="pairHistoryDetails"
       class="card history-details hidden"
@@ -385,9 +425,6 @@
     </details>
 
 
-    <!-- =====================================
-         管理者：最多対戦相手
-    ====================================== -->
     <details
       id="opponentHistoryDetails"
       class="card history-details hidden"
@@ -453,9 +490,6 @@
     </details>
 
 
-    <!-- =====================================
-         管理・Firebase
-    ====================================== -->
     <details
       id="systemDetails"
       class="system-details"
@@ -513,9 +547,6 @@
   </main>
 
 
-  <!-- =====================================
-       管理者：参加者編集モーダル
-  ====================================== -->
   <div
     id="editParticipantModal"
     class="modal-backdrop hidden"
@@ -656,17 +687,15 @@
   </div>
 
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"></script>
 
-
-  <!-- 既存アプリ -->
   <script src="script.js?v=31"></script>
 
-  <!-- v32：追加機能 -->
   <script src="participant-link.js?v=32"></script>
+
+  <script src="admin-delegation.js?v=33"></script>
 
 </body>
 
