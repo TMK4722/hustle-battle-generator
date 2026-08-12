@@ -1616,17 +1616,9 @@ async function generateRound() {
 
   const battles =
     createFairBattles(
-      pairs
+      pairs,
+      previousFinalBattleParticipantIds
     );
-
-  /*
-    誰が出場するかは変えず、
-    Battleの並び順だけを調整する。
-  */
-  prioritizeFirstBattleForRest(
-    battles,
-    previousFinalBattleParticipantIds
-  );
 
   const usedIds =
     new Set();
@@ -1798,91 +1790,253 @@ function getPreviousFinalBattleParticipantIds() {
 }
 
 /*
-  現RoundのBattleの中から、
-  前Round最終Battleの担当者が
-  最も少ないBattleをBattle 1へ移動する。
+  DanceのPair自体は変更せず、
+  前Round最終Battleの担当者と連続しにくいように
+  Pair同士のBattle構成と順番を決める。
+
+  Battle 1は「前Round最終Battleとの重複人数」を最優先で最小化する。
+  重複人数が同じ場合は、これまでどおり同Role対戦履歴が少ない組合せを優先する。
 */
-function prioritizeFirstBattleForRest(
-  battles,
-  avoidIds
+function createFairBattles(
+  pairs,
+  firstBattleAvoidIds = new Set()
 ) {
-  if (
-    !Array.isArray(battles) ||
-    battles.length <= 1 ||
-    !avoidIds ||
-    avoidIds.size === 0
-  ) {
-    return;
+  const battles = [];
+  const availablePairs = [...pairs];
+
+  if (availablePairs.length < 2) {
+    return battles;
   }
 
-  let bestIndex = 0;
-
-  let bestOverlap =
-    getBattleDanceOverlapCount(
-      battles[0],
-      avoidIds
+  /*
+    最初のBattleだけは、全Pairの組合せを確認して
+    Round境界の連続を最小化する。
+  */
+  const firstBattlePairIndexes =
+    findBestFirstBattlePairIndexes(
+      availablePairs,
+      firstBattleAvoidIds
     );
 
-  for (
-    let i = 1;
-    i < battles.length;
-    i++
+  if (firstBattlePairIndexes) {
+    const firstIndex =
+      firstBattlePairIndexes[0];
+    const secondIndex =
+      firstBattlePairIndexes[1];
+
+    const pairA =
+      availablePairs[firstIndex];
+    const pairB =
+      availablePairs[secondIndex];
+
+    battles.push({
+      pairA: pairA,
+      pairB: pairB,
+      judges: []
+    });
+
+    /*
+      大きいindexから削除して、
+      配列のindexずれを防ぐ。
+    */
+    [firstIndex, secondIndex]
+      .sort(
+        function (a, b) {
+          return b - a;
+        }
+      )
+      .forEach(
+        function (index) {
+          availablePairs.splice(
+            index,
+            1
+          );
+        }
+      );
+  }
+
+  /*
+    Battle 2以降は従来どおり、
+    同Role対戦履歴が少ない組合せを優先する。
+  */
+  const remainingPairs =
+    shuffleArray(
+      availablePairs
+    );
+
+  while (
+    remainingPairs.length >= 2
   ) {
-    const overlap =
-      getBattleDanceOverlapCount(
-        battles[i],
-        avoidIds
+    const pairA =
+      remainingPairs.shift();
+
+    let minimumScore =
+      Infinity;
+
+    let candidates = [];
+
+    remainingPairs.forEach(
+      function (pair) {
+        const score =
+          getBattleOpponentScore(
+            pairA,
+            pair
+          );
+
+        if (
+          score <
+          minimumScore
+        ) {
+          minimumScore =
+            score;
+
+          candidates =
+            [pair];
+
+        } else if (
+          score ===
+          minimumScore
+        ) {
+          candidates.push(
+            pair
+          );
+        }
+      }
+    );
+
+    const pairB =
+      getRandomItem(
+        candidates
       );
 
-    if (
-      overlap <
-      bestOverlap
+    battles.push({
+      pairA: pairA,
+      pairB: pairB,
+      judges: []
+    });
+
+    remainingPairs.splice(
+      remainingPairs.indexOf(
+        pairB
+      ),
+      1
+    );
+  }
+
+  return battles;
+}
+
+function findBestFirstBattlePairIndexes(
+  pairs,
+  avoidIds
+) {
+  if (pairs.length < 2) {
+    return null;
+  }
+
+  let bestOverlap =
+    Infinity;
+
+  let bestOpponentScore =
+    Infinity;
+
+  let bestCandidates = [];
+
+  for (
+    let i = 0;
+    i < pairs.length - 1;
+    i++
+  ) {
+    for (
+      let j = i + 1;
+      j < pairs.length;
+      j++
     ) {
-      bestOverlap = overlap;
-      bestIndex = i;
+      const overlap =
+        getPairAvoidOverlapCount(
+          pairs[i],
+          avoidIds
+        )
+        +
+        getPairAvoidOverlapCount(
+          pairs[j],
+          avoidIds
+        );
+
+      const opponentScore =
+        getBattleOpponentScore(
+          pairs[i],
+          pairs[j]
+        );
+
+      if (
+        overlap <
+        bestOverlap
+        ||
+        (
+          overlap ===
+          bestOverlap
+          &&
+          opponentScore <
+          bestOpponentScore
+        )
+      ) {
+        bestOverlap = overlap;
+        bestOpponentScore =
+          opponentScore;
+        bestCandidates = [
+          [i, j]
+        ];
+
+      } else if (
+        overlap ===
+        bestOverlap
+        &&
+        opponentScore ===
+        bestOpponentScore
+      ) {
+        bestCandidates.push(
+          [i, j]
+        );
+      }
     }
   }
 
-  if (bestIndex !== 0) {
-    [
-      battles[0],
-      battles[bestIndex]
-    ] = [
-      battles[bestIndex],
-      battles[0]
-    ];
-  }
+  return getRandomItem(
+    bestCandidates
+  );
 }
 
-function getBattleDanceOverlapCount(
-  battle,
+function getPairAvoidOverlapCount(
+  pair,
   avoidIds
 ) {
-  const dancerIds = [
-    battle.pairA.leader.id,
-    battle.pairA.follower.id,
-    battle.pairB.leader.id,
-    battle.pairB.follower.id
-  ];
+  if (
+    !avoidIds ||
+    avoidIds.size === 0
+  ) {
+    return 0;
+  }
 
-  return dancerIds.reduce(
-    function (
-      count,
-      id
-    ) {
-      return (
-        count +
-        (
-          avoidIds.has(
-            String(id)
-          )
-            ? 1
-            : 0
-        )
-      );
-    },
-    0
-  );
+  let count = 0;
+
+  if (
+    avoidIds.has(
+      String(pair.leader.id)
+    )
+  ) {
+    count++;
+  }
+
+  if (
+    avoidIds.has(
+      String(pair.follower.id)
+    )
+  ) {
+    count++;
+  }
+
+  return count;
 }
 
 function createFairPairs(
@@ -1966,76 +2120,6 @@ function createFairPairs(
   return pairs;
 }
 
-function createFairBattles(pairs) {
-  const battles = [];
-
-  const availablePairs =
-    shuffleArray(
-      pairs
-    );
-
-  while (
-    availablePairs.length >= 2
-  ) {
-    const pairA =
-      availablePairs.shift();
-
-    let minimumScore =
-      Infinity;
-
-    let candidates = [];
-
-    availablePairs.forEach(
-      function (pair) {
-        const score =
-          getBattleOpponentScore(
-            pairA,
-            pair
-          );
-
-        if (
-          score <
-          minimumScore
-        ) {
-          minimumScore =
-            score;
-
-          candidates =
-            [pair];
-
-        } else if (
-          score ===
-          minimumScore
-        ) {
-          candidates.push(
-            pair
-          );
-        }
-      }
-    );
-
-    const pairB =
-      getRandomItem(
-        candidates
-      );
-
-    battles.push({
-      pairA: pairA,
-      pairB: pairB,
-      judges: []
-    });
-
-    availablePairs.splice(
-      availablePairs.indexOf(
-        pairB
-      ),
-      1
-    );
-  }
-
-  return battles;
-}
-
 function getBattleOpponentScore(
   pairA,
   pairB
@@ -2068,7 +2152,7 @@ function selectJudgesForBattle(
       battle.pairB.follower.id
     ]);
 
-  const candidates =
+  const allCandidates =
     participants.filter(
       function (participant) {
         return (
@@ -2081,15 +2165,37 @@ function selectJudgesForBattle(
       }
     );
 
-  if (candidates.length === 0) {
+  if (allCandidates.length === 0) {
     return [];
   }
 
   const judgeCount =
     Math.min(
       requestedCount,
-      candidates.length
+      allCandidates.length
     );
+
+  /*
+    Battle 1では、前Round最終Battleの担当者以外だけで
+    必要人数を確保できるなら、その人たちだけを候補にする。
+    不足する場合だけ連続担当を許可する。
+  */
+  const restedCandidates =
+    allCandidates.filter(
+      function (participant) {
+        return (
+          !avoidIds.has(
+            String(participant.id)
+          )
+        );
+      }
+    );
+
+  const candidates =
+    restedCandidates.length >=
+    judgeCount
+      ? restedCandidates
+      : allCandidates;
 
   const combinations =
     createCombinations(
@@ -2165,8 +2271,9 @@ function getJudgeCombinationScore(
     );
 
   /*
-    Judge公平性が同じ場合は、
-    前Round最終Battleの担当者を避ける。
+    前Round最終Battleからの連続人数。
+    代替候補が不足した場合だけ、この値を使って
+    連続人数を最小化する。
   */
   const continuityPenalty =
     judges.reduce(
@@ -3823,8 +3930,8 @@ function createJudgeElement(
         ) === "judgeOnly"
           ? "Judgeのみ"
           : getRoleLabel(
-              judge.role
-            );
+            judge.role
+          );
 
       item.appendChild(name);
       item.appendChild(role);
