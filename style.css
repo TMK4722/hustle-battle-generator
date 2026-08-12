@@ -1305,6 +1305,7 @@ body.admin-mode .system-details {
   }
 }
 
+
 /* ========================================
    v27：参加区分
 ======================================== */
@@ -1337,6 +1338,7 @@ body.admin-mode .system-details {
 .participant-edit-button {
   margin-top: 7px;
 }
+
 
 /* ========================================
    v27：参加者編集モーダル
@@ -1391,4 +1393,62 @@ body.admin-mode .system-details {
     max-height: calc(100vh - 20px);
     padding: 17px;
   }
+}
+
+
+/* ========================================
+   v32：既存参加者との端末紐づけ
+======================================== */
+
+.existing-link-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.existing-link-divider {
+  margin-bottom: 14px;
+  color: #999;
+  font-size: 12px;
+  text-align: center;
+}
+
+.existing-link-section h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.existing-link-description {
+  margin: 0 0 12px;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.existing-participant-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  background: #fff;
+  color: #222;
+  font-size: 14px;
+}
+
+.existing-link-button {
+  margin-top: 10px;
+}
+
+.existing-link-button:disabled {
+  color: #aaa;
+  background: #f7f7f7;
+  cursor: default;
+}
+
+.existing-link-message {
+  margin-top: 8px;
+  color: #888;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
 }

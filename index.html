@@ -7,22 +7,30 @@
 
   <title>Hustle Battle Generator</title>
 
-  <link rel="stylesheet" href="style.css?v=27">
+  <link rel="stylesheet" href="style.css?v=32">
 </head>
 
 <body>
 
   <main class="container">
 
+    <!-- =====================================
+         ヘッダー
+    ====================================== -->
     <header class="app-header">
+
       <h1>Hustle Battle Generator</h1>
 
       <p>
         Hustle Practice Battle
       </p>
+
     </header>
 
 
+    <!-- =====================================
+         参加登録 / 管理者参加者追加
+    ====================================== -->
     <section
       id="registrationCard"
       class="card registration-card"
@@ -158,9 +166,54 @@
         参加する
       </button>
 
+
+      <div
+        id="existingLinkSection"
+        class="existing-link-section"
+      >
+
+        <div class="existing-link-divider">
+          または
+        </div>
+
+        <h3>
+          管理者が追加済みの場合
+        </h3>
+
+        <p class="existing-link-description">
+          管理者が先に登録した自分の名前を選ぶと、この端末と参加者情報を紐づけできます。
+        </p>
+
+        <select
+          id="existingParticipantSelect"
+          class="existing-participant-select"
+        >
+          <option value="">
+            自分の名前を選択
+          </option>
+        </select>
+
+        <button
+          type="button"
+          id="linkExistingParticipantButton"
+          class="secondary-button existing-link-button"
+        >
+          この参加者として紐づける
+        </button>
+
+        <div
+          id="existingParticipantMessage"
+          class="existing-link-message"
+        ></div>
+
+      </div>
+
     </section>
 
 
+    <!-- =====================================
+         現在のRound
+    ====================================== -->
     <section
       id="roundResultCard"
       class="card round-result-card hidden"
@@ -179,6 +232,7 @@
           </h2>
 
         </div>
+
 
         <span id="battleCount"></span>
 
@@ -210,6 +264,9 @@
     </section>
 
 
+    <!-- =====================================
+         参加者一覧
+    ====================================== -->
     <section
       id="participantListCard"
       class="card participant-list-card"
@@ -239,6 +296,9 @@
     </section>
 
 
+    <!-- =====================================
+         管理者：Round生成
+    ====================================== -->
     <section
       id="roundControlCard"
       class="card admin-card hidden"
@@ -282,6 +342,9 @@
     </section>
 
 
+    <!-- =====================================
+         管理者：Pair履歴
+    ====================================== -->
     <details
       id="pairHistoryDetails"
       class="card history-details hidden"
@@ -322,6 +385,9 @@
     </details>
 
 
+    <!-- =====================================
+         管理者：最多対戦相手
+    ====================================== -->
     <details
       id="opponentHistoryDetails"
       class="card history-details hidden"
@@ -387,6 +453,9 @@
     </details>
 
 
+    <!-- =====================================
+         管理・Firebase
+    ====================================== -->
     <details
       id="systemDetails"
       class="system-details"
@@ -444,6 +513,9 @@
   </main>
 
 
+  <!-- =====================================
+       管理者：参加者編集モーダル
+  ====================================== -->
   <div
     id="editParticipantModal"
     class="modal-backdrop hidden"
@@ -584,11 +656,17 @@
   </div>
 
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"></script>
 
-  <script src="script.js?v=28"></script>
+
+  <!-- 既存アプリ -->
+  <script src="script.js?v=31"></script>
+
+  <!-- v32：追加機能 -->
+  <script src="participant-link.js?v=32"></script>
 
 </body>
 
