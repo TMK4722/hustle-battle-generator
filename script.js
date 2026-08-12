@@ -1613,18 +1613,39 @@ async function generateRound() {
     );
 
   /*
-    v30:
-    出場メンバーは変えず、Battle 1だけ先に決める。
-    前Round最終Battle担当者との重複人数を最優先で最小化し、
-    その条件内でPair履歴・対戦履歴が少ない組合せを選ぶ。
-    残りの参加者は従来ロジックでPair/Battleを作る。
+    v31:
+    まず従来どおりPairとBattleを公平性優先で作る。
+    そのBattle順の入れ替えだけでRound境界の連続を0人にできるなら、
+    Pair構成は一切変更しない。
+
+    順番変更だけでは連続を0人にできない場合に限り、
+    Battle 1の4人・Pair構成を再検討する。
   */
-  const battles =
-    createRoundBattlesWithProtectedFirstBattle(
+  const standardPairs =
+    createFairPairs(
       selectedLeaders,
-      selectedFollowers,
+      selectedFollowers
+    );
+
+  let battles =
+    createFairBattles(
+      standardPairs
+    );
+
+  const couldAvoidByReordering =
+    moveZeroOverlapBattleToFront(
+      battles,
       previousFinalBattleParticipantIds
     );
+
+  if (!couldAvoidByReordering) {
+    battles =
+      createRoundBattlesWithProtectedFirstBattle(
+        selectedLeaders,
+        selectedFollowers,
+        previousFinalBattleParticipantIds
+      );
+  }
 
   const usedIds =
     new Set();
@@ -1796,14 +1817,106 @@ function getPreviousFinalBattleParticipantIds() {
 }
 
 /*
-  v30:
-  Battle 1を先に決めてから、残りを従来ロジックで組む。
+  v31 第1段階:
+  従来どおり作ったBattleの中に、前Round最終Battleとの
+  Dance重複が0人のBattleがあれば、そのBattleを先頭へ移す。
 
-  1. 今Roundに出るLeader/Followerはすでに確定済み。
-  2. Battle 1の2 Leader + 2 Followerを全候補から比較。
-  3. 前Round最終Battleとの重複人数を最優先で最小化。
-  4. 同条件ならPair履歴、同Role対戦履歴が少ないものを優先。
-  5. 残りは従来どおり公平にPair/Battleを生成。
+  ここで成功した場合、Pair構成は一切変更しない。
+*/
+function moveZeroOverlapBattleToFront(
+  battles,
+  avoidIds
+) {
+  if (
+    !Array.isArray(battles) ||
+    battles.length === 0
+  ) {
+    return false;
+  }
+
+  if (
+    !avoidIds ||
+    avoidIds.size === 0
+  ) {
+    return true;
+  }
+
+  const zeroOverlapIndexes = [];
+
+  battles.forEach(
+    function (battle, index) {
+      if (
+        getBattleDanceOverlapCount(
+          battle,
+          avoidIds
+        ) === 0
+      ) {
+        zeroOverlapIndexes.push(
+          index
+        );
+      }
+    }
+  );
+
+  if (zeroOverlapIndexes.length === 0) {
+    return false;
+  }
+
+  const selectedIndex =
+    getRandomItem(
+      zeroOverlapIndexes
+    );
+
+  if (selectedIndex !== 0) {
+    [
+      battles[0],
+      battles[selectedIndex]
+    ] = [
+      battles[selectedIndex],
+      battles[0]
+    ];
+  }
+
+  return true;
+}
+
+function getBattleDanceOverlapCount(
+  battle,
+  avoidIds
+) {
+  const dancerIds = [
+    battle.pairA.leader.id,
+    battle.pairA.follower.id,
+    battle.pairB.leader.id,
+    battle.pairB.follower.id
+  ];
+
+  return dancerIds.reduce(
+    function (
+      count,
+      id
+    ) {
+      return (
+        count +
+        (
+          avoidIds.has(
+            String(id)
+          )
+            ? 1
+            : 0
+        )
+      );
+    },
+    0
+  );
+}
+
+/*
+  v31 第2段階:
+  Battle順の変更だけではRound境界の連続を0人にできなかった場合のみ使用。
+
+  今Roundに出場する人自体は変更せず、Battle 1の4人・Pair構成を再検討する。
+  連続人数を最優先で最小化し、その条件内でPair履歴と対戦履歴を評価する。
 */
 function createRoundBattlesWithProtectedFirstBattle(
   selectedLeaders,
@@ -1933,10 +2046,6 @@ function selectProtectedFirstBattle(
           const followerB =
             followers[followerBIndex];
 
-          /*
-            同じ4人でもPairの組み方は2通りあるため、
-            両方を評価する。
-          */
           const arrangements = [
             {
               pairA: {
@@ -2069,10 +2178,6 @@ function compareProtectedFirstBattleScores(
   a,
   b
 ) {
-  /*
-    最優先は実際の連戦回避。
-    0人重複が可能なら必ず0人を選ぶ。
-  */
   if (
     a.continuityPenalty !==
     b.continuityPenalty
@@ -2083,10 +2188,6 @@ function compareProtectedFirstBattleScores(
     );
   }
 
-  /*
-    連続条件が同じなら、
-    同じPairの繰り返しを避ける。
-  */
   if (
     a.pairHistoryPenalty !==
     b.pairHistoryPenalty
@@ -2097,10 +2198,6 @@ function compareProtectedFirstBattleScores(
     );
   }
 
-  /*
-    さらに同条件なら、
-    同Role対戦の繰り返しを避ける。
-  */
   return (
     a.opponentHistoryPenalty -
     b.opponentHistoryPenalty
@@ -2316,7 +2413,7 @@ function selectJudgesForBattle(
   /*
     Battle 1では、前Round最終Battle担当者以外だけで
     Judge必要人数を確保できるなら、その人たちだけを候補にする。
-    これにより回避可能な連続Judgeは発生しない。
+    不足する場合だけ連続担当者を候補へ戻す。
   */
   const restedCandidates =
     allCandidates.filter(
@@ -2474,8 +2571,8 @@ function getJudgeCombinationScore(
 
 function compareJudgeScores(a, b) {
   /*
-    Battle 1で連続回避が必要な場合は、
-    まず連続人数を最小にする。
+    Battle 1ではRound境界の連続回避を最優先。
+    連続条件が同じなら従来どおりJudge公平性を優先する。
   */
   if (
     a.continuityPenalty !==
@@ -2487,10 +2584,6 @@ function compareJudgeScores(a, b) {
     );
   }
 
-  /*
-    連続条件が同じなら、これまでどおり
-    Judge公平性を優先する。
-  */
   if (
     a.maximumCount !==
     b.maximumCount
