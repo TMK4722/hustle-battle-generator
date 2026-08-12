@@ -7,7 +7,7 @@
 
   <title>Hustle Battle Generator</title>
 
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="style.css?v=27">
 </head>
 
 <body>
@@ -64,58 +64,98 @@
 
 
       <p class="field-label">
-        Role
+        参加区分
       </p>
 
-      <div class="role-selector">
+      <div class="participation-selector">
 
         <label>
           <input
             type="radio"
-            name="role"
-            value="leader"
+            name="participationType"
+            value="dance"
+            checked
           >
-          Leader
+          Dance参加
         </label>
 
         <label>
           <input
             type="radio"
-            name="role"
-            value="follower"
+            name="participationType"
+            value="judgeOnly"
           >
-          Follower
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="role"
-            value="both"
-          >
-          Both
+          Judgeのみ
         </label>
 
       </div>
 
-
-      <p class="field-label">
-        Judge
+      <p class="participation-note">
+        JudgeのみはBattleには出場せず、Judge候補として公平に選定されます。
       </p>
 
-      <label class="judge-selector">
 
-        <input
-          type="checkbox"
-          id="judgeAvailable"
-          checked
-        >
+      <div id="danceOptions">
 
-        <span>
-          Judge可能
-        </span>
+        <p class="field-label">
+          Role
+        </p>
 
-      </label>
+        <div class="role-selector">
+
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="leader"
+            >
+            Leader
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="follower"
+            >
+            Follower
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="both"
+            >
+            Both
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <div id="judgeOptions">
+
+        <p class="field-label">
+          Judge
+        </p>
+
+        <label class="judge-selector">
+
+          <input
+            type="checkbox"
+            id="judgeAvailable"
+            checked
+          >
+
+          <span>
+            Judge可能
+          </span>
+
+        </label>
+
+      </div>
 
 
       <button
@@ -431,6 +471,149 @@
   </main>
 
 
+  <!-- =====================================
+       管理者：参加者編集モーダル
+  ====================================== -->
+  <div
+    id="editParticipantModal"
+    class="modal-backdrop hidden"
+  >
+
+    <div class="modal-card">
+
+      <h2>
+        参加者を編集
+      </h2>
+
+
+      <label
+        class="field-label"
+        for="editParticipantName"
+      >
+        名前
+      </label>
+
+      <input
+        type="text"
+        id="editParticipantName"
+        class="name-input"
+      >
+
+
+      <p class="field-label">
+        参加区分
+      </p>
+
+      <div class="participation-selector">
+
+        <label>
+          <input
+            type="radio"
+            name="editParticipationType"
+            value="dance"
+          >
+          Dance参加
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="editParticipationType"
+            value="judgeOnly"
+          >
+          Judgeのみ
+        </label>
+
+      </div>
+
+
+      <div id="editDanceOptions">
+
+        <p class="field-label">
+          Role
+        </p>
+
+        <div class="role-selector">
+
+          <label>
+            <input
+              type="radio"
+              name="editRole"
+              value="leader"
+            >
+            Leader
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="editRole"
+              value="follower"
+            >
+            Follower
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="editRole"
+              value="both"
+            >
+            Both
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <div id="editJudgeOptions">
+
+        <p class="field-label">
+          Judge
+        </p>
+
+        <label class="judge-selector">
+
+          <input
+            type="checkbox"
+            id="editJudgeAvailable"
+          >
+
+          <span>
+            Judge可能
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          id="editParticipantCancel"
+          class="secondary-button"
+        >
+          キャンセル
+        </button>
+
+        <button
+          type="button"
+          id="editParticipantSave"
+          class="add-button"
+        >
+          保存
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
@@ -438,7 +621,7 @@
 
 
   <!-- アプリ -->
-  <script src="script.js?v=26"></script>
+  <script src="script.js?v=27"></script>
 
 </body>
 
